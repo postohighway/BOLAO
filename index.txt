@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bolão Quina - Controle de Pagamentos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+    }
+
+    header {
+      background: #ff9800;
+      color: #fff;
+      padding: 12px 16px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .container {
+      padding: 10px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .resumo {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .resumo strong {
+      display: inline-block;
+      min-width: 120px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      font-size: 13px;
+    }
+
+    thead {
+      background: #ffb300;
+      color: #000;
+    }
+
+    th,
+    td {
+      padding: 6px 4px;
+      border-bottom: 1px solid #e0e0e0;
+      text-align: left;
+    }
+
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 40px;
+      text-align: center;
+    }
+
+    th:nth-child(2) {
+      min-width: 160px;
+    }
+
+    th:nth-child(3),
+    th:nth-child(4),
+    th:nth-child(5),
+    th:nth-child(6) {
+      text-align: center;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    tr.pago {
+      background: #c8e6c9 !important; /* verde claro */
+    }
+
+    tr.prometeu {
+      background: #fff9c4 !important; /* amarelo claro */
+    }
+
+    tr.nao-entrou {
+      background: #eeeeee !important; /* cinza claro */
+    }
+
+    select,
+    button {
+      font-size: 12px;
+      padding: 4px 6px;
+    }
+
+    button {
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background: #f5f5f5;
+      cursor: pointer;
+    }
+
+    button.ativo {
+      background: #4caf50;
+      color: #fff;
+      border-color: #388e3c;
+      font-weight: 600;
+    }
+
+    .status-select {
+      width: 120px;
+    }
+
+    @media (max-width: 720px) {
+      th,
+      td {
+        padding: 5px 3px;
+      }
+      .status-select {
+        width: 110px;
+      }
+      header {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>Bolão Quina - Controle de Pagamentos</header>
+
+  <div class="container">
+    <div class="resumo" id="resumo">
+      <div><strong>Total nomes:</strong> <span id="totalNomes">0</span></div>
+      <div><strong>Pagos:</strong> <span id="totalPagos">0</span></div>
+      <div><strong>Prometeram:</strong> <span id="totalPrometeram">0</span></div>
+      <div><strong>Não entraram:</strong> <span id="totalNaoEntraram">0</span></div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nº</th>
+          <th>Nome</th>
+          <th>Status</th>
+          <th>Pagou Waldecir</th>
+          <th>Pagou Lotérica</th>
+          <th>Obs</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaParticipantes"></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Lista de participantes (do PDF)
+    const participants = [
+      { id: 1, name: "Abbas" },
+      { id: 2, name: "Adicionaldo Reis" },
+      { id: 3, name: "André Massa" },
+      { id: 4, name: "Antenor Rabelo" },
+      { id: 5, name: "Aníbal (Café)" },
+      { id: 6, name: "Carlos Alberto (BTG)" },
+      { id: 7, name: "Carlos Henrique" },
+      { id: 8, name: "Cristiano Maia Quintão" },
+      { id: 9, name: "Dalel Elias" },
+      { id: 10, name: "Damião" },
+      { id: 11, name: "Daniel Franco Costa" },
+      { id: 12, name: "Daniel Mascia" },
+      { id: 13, name: "Delcio Tannus" },
+      { id: 14, name: "Dr. Dásio Pires" },
+      { id: 15, name: "Dr. Fernando Martinelle" },
+      { id: 16, name: "Dr. Laerte" },
+      { id: 17, name: "Dr. Rubens (Check Up)" },
+      { id: 18, name: "Durval" },
+      { id: 19, name: "Eduardo Santana" },
+      { id: 20, name: "Eliamar Rodrigues/Abdala" },
+      { id: 21, name: "Equipe Financeira Copenhague C. Sócios" },
+      { id: 22, name: "Equipe Jinjin (Uber)" },
+      { id: 23, name: "Evelyn Tanache R. Matoso" },
+      { id: 24, name: "Eudes" },
+      { id: 25, name: "Fabiano F. C. Batista" },
+      { id: 26, name: "Fabiano Sena" },
+      { id: 27, name: "Flávia (Nuty Bavariam)" },
+      { id: 28, name: "Flávio Luiz Lobato" },
+      { id: 29, name: "Gabriel Aquery" },
+      { id: 30, name: "Henrique A Gonçalves" },
+      { id: 31, name: "Hudson Ferreira" },
+      { id: 32, name: "Hugo Tannus Luz" },
+      { id: 33, name: "Hélton Regis" },
+      { id: 34, name: "Ivair R. Souza" },
+      { id: 35, name: "Jeferson (Eq. J.J. Center)" },
+      { id: 36, name: "Jesse James" },
+      { id: 37, name: "Joana / Wagner" },
+      { id: 38, name: "José Humberto (Major)" },
+      { id: 39, name: "José Reinaldo (Cosam)" },
+      { id: 40, name: "João Paulo (J.P)" },
+      { id: 41, name: "João (Victor Hugo)" },
+      { id: 42, name: "Keyno Carvalho" },
+      { id: 43, name: "Leandro Tawil" },
+      { id: 44, name: "Leonardo Mascia" },
+      { id: 45, name: "Leonardo Ramalho Bastos" },
+      { id: 46, name: "Lorenzo Tannus" },
+      { id: 47, name: "Lucimar" },
+      { id: 48, name: "Luiz César Amaral" },
+      { id: 49, name: "Luiz César Blanchine" },
+      { id: 50, name: "Luiz Heugenio (cartório)" },
+      { id: 51, name: "Luiz Humberto Villar" },
+      { id: 52, name: "Luzenilson (Elite const.)" },
+      { id: 53, name: "Marcelo Loureiro" },
+      { id: 54, name: "Marcelo M. Pagotto" },
+      { id: 55, name: "Marco Antônio Rodrigues" },
+      { id: 56, name: "Marco Andrey" },
+      { id: 57, name: "Marco Aurélio" },
+      { id: 58, name: "Marcone da Silva" },
+      { id: 59, name: "Marcos Elidio" },
+      { id: 60, name: "Mateus Moreira" },
+      { id: 61, name: "Müller" },
+      { id: 62, name: "Murilo Dorazio" },
+      { id: 63, name: "Marcia L. Almeida" },
+      { id: 64, name: "Naeim Haissam" },
+      { id: 65, name: "Nelson Lúcio / Fatima" },
+      { id: 66, name: "Ostro games" },
+      { id: 67, name: "Paulo Márcio Bittar" },
+      { id: 68, name: "Paulo Roberto Nascimento" },
+      { id: 69, name: "Pedro Guimarães" },
+      { id: 70, name: "Radouane E. Salemy" },
+      { id: 71, name: "Ramira" },
+      { id: 72, name: "Renner" },
+      { id: 73, name: "Ricardinho" },
+      { id: 74, name: "Ricardo Franco Santos" },
+      { id: 75, name: "Roberto (Fompiani)" },
+      { id: 76, name: "Roberto Elias Tanache" },
+      { id: 77, name: "Rodrigo Nunes" },
+      { id: 78, name: "Rubens de Freitas Neto" },
+      { id: 79, name: "Régio I. Kaminice" },
+      { id: 80, name: "Saulo (bombeiro)" },
+      { id: 81, name: "Sebastião Carvalho" },
+      { id: 82, name: "Suleide" },
+      { id: 83, name: "Otavico (Luiz O. Carneiro)" },
+      { id: 84, name: "Toninho (Akformas)" },
+      { id: 85, name: "Túlio de Almeida Cedro" },
+      { id: 86, name: "Valdo" },
+      { id: 87, name: "Vera Lucia Loureiro" },
+      { id: 88, name: "Vicente C. Franco" },
+      { id: 89, name: "Wagner Luiz" },
+      { id: 90, name: "Waldecir Rodrigues" },
+      { id: 91, name: "William" },
+      { id: 92, name: "Wissam" }
+    ];
+
+    function getStorageKey(id) {
+      return "bolao_quina_participante_" + id;
+    }
+
+    function loadState(id) {
+      const raw = localStorage.getItem(getStorageKey(id));
+      if (!raw) {
+        return {
+          status: "nao_entrou", // nao_entrou | prometeu | pago
+          pagouWaldecir: false,
+          pagouLoterica: false,
+          obs: ""
+        };
+      }
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        return {
+          status: "nao_entrou",
+          pagouWaldecir: false,
+          pagouLoterica: false,
+          obs: ""
+        };
+      }
+    }
+
+    function saveState(id, state) {
+      localStorage.setItem(getStorageKey(id), JSON.stringify(state));
+    }
+
+    function atualizarResumo() {
+      const total = participants.length;
+      let pagos = 0;
+      let prometeram = 0;
+      let naoEntraram = 0;
+
+      participants.forEach((p) => {
+        const st = loadState(p.id);
+        let status = st.status;
+
+        if (st.pagouWaldecir || st.pagouLoterica) {
+          status = "pago";
+        }
+
+        if (status === "pago") pagos++;
+        else if (status === "prometeu") prometeram++;
+        else naoEntraram++;
+      });
+
+      document.getElementById("totalNomes").textContent = total;
+      document.getElementById("totalPagos").textContent = pagos;
+      document.getElementById("totalPrometeram").textContent = prometeram;
+      document.getElementById("totalNaoEntraram").textContent = naoEntraram;
+    }
+
+    function aplicarCoresLinha(tr, state) {
+      tr.classList.remove("pago", "prometeu", "nao-entrou");
+
+      let status = state.status;
+      if (state.pagouWaldecir || state.pagouLoterica) {
+        status = "pago";
+      }
+
+      if (status === "pago") {
+        tr.classList.add("pago");
+      } else if (status === "prometeu") {
+        tr.classList.add("prometeu");
+      } else {
+        tr.classList.add("nao-entrou");
+      }
+    }
+
+    function criarLinha(participante) {
+      const state = loadState(participante.id);
+      const tr = document.createElement("tr");
+      tr.dataset.id = participante.id;
+
+      const tdId = document.createElement("td");
+      tdId.textContent = participante.id;
+
+      const tdNome = document.createElement("td");
+      tdNome.textContent = participante.name;
+
+      const tdStatus = document.createElement("td");
+      const select = document.createElement("select");
+      select.className = "status-select";
+      [
+        { value: "nao_entrou", label: "Não entrou" },
+        { value: "prometeu", label: "Prometeu" },
+        { value: "pago", label: "Pago" }
+      ].forEach((opt) => {
+        const o = document.createElement("option");
+        o.value = opt.value;
+        o.textContent = opt.label;
+        select.appendChild(o);
+      });
+      select.value = state.status || "nao_entrou";
+      tdStatus.appendChild(select);
+
+      const tdWaldecir = document.createElement("td");
+      const btnWal = document.createElement("button");
+      btnWal.textContent = "OK Waldecir";
+      if (state.pagouWaldecir) btnWal.classList.add("ativo");
+      tdWaldecir.style.textAlign = "center";
+      tdWaldecir.appendChild(btnWal);
+
+      const tdLoterica = document.createElement("td");
+      const btnLot = document.createElement("button");
+      btnLot.textContent = "OK Lotérica";
+      if (state.pagouLoterica) btnLot.classList.add("ativo");
+      tdLoterica.style.textAlign = "center";
+      tdLoterica.appendChild(btnLot);
+
+      const tdObs = document.createElement("td");
+      const inputObs = document.createElement("input");
+      inputObs.type = "text";
+      inputObs.placeholder = "Obs (ex: talão, data...)";
+      inputObs.style.width = "100%";
+      inputObs.value = state.obs || "";
+      tdObs.appendChild(inputObs);
+
+      tr.appendChild(tdId);
+      tr.appendChild(tdNome);
+      tr.appendChild(tdStatus);
+      tr.appendChild(tdWaldecir);
+      tr.appendChild(tdLoterica);
+      tr.appendChild(tdObs);
+
+      // Eventos
+      select.addEventListener("change", () => {
+        const st = loadState(participante.id);
+        st.status = select.value;
+        // se marcou pago no status, não mexe nos botões
+        saveState(participante.id, st);
+        aplicarCoresLinha(tr, st);
+        atualizarResumo();
+      });
+
+      btnWal.addEventListener("click", () => {
+        const st = loadState(participante.id);
+        st.pagouWaldecir = !st.pagouWaldecir;
+        if (st.pagouWaldecir) {
+          btnWal.classList.add("ativo");
+          st.status = "pago";
+        } else {
+          btnWal.classList.remove("ativo");
+        }
+        saveState(participante.id, st);
+        aplicarCoresLinha(tr, st);
+        atualizarResumo();
+      });
+
+      btnLot.addEventListener("click", () => {
+        const st = loadState(participante.id);
+        st.pagouLoterica = !st.pagouLoterica;
+        if (st.pagouLoterica) {
+          btnLot.classList.add("ativo");
+          st.status = "pago";
+        } else {
+          btnLot.classList.remove("ativo");
+        }
+        saveState(participante.id, st);
+        aplicarCoresLinha(tr, st);
+        atualizarResumo();
+      });
+
+      inputObs.addEventListener("change", () => {
+        const st = loadState(participante.id);
+        st.obs = inputObs.value;
+        saveState(participante.id, st);
+      });
+
+      aplicarCoresLinha(tr, state);
+      return tr;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const tbody = document.getElementById("tabelaParticipantes");
+      participants.forEach((p) => {
+        const row = criarLinha(p);
+        tbody.appendChild(row);
+      });
+      atualizarResumo();
+    });
+  </script>
+</body>
+</html>
