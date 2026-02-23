@@ -1,446 +1,593 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Bolão Quina - Controle de Pagamentos</title>
+  <title>Painel Juliano — Lava Rápido Favorito</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
+    :root{
+      --bg:#f4f6f8; --card:#fff; --text:#111; --muted:#666;
+      --primary:#0b7285; --danger:#c92a2a; --gray:#868e96;
+      --shadow:0 1px 3px rgba(0,0,0,.12); --radius:14px;
     }
-
-    header {
-      background: #ff9800;
-      color: #fff;
-      padding: 12px 16px;
-      text-align: center;
-      font-weight: 600;
-    }
-
-    .container {
-      padding: 10px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .resumo {
-      background: #ffffff;
-      border-radius: 8px;
-      padding: 10px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-      margin-bottom: 10px;
-      font-size: 14px;
-    }
-
-    .resumo strong {
-      display: inline-block;
-      min-width: 120px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #ffffff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-      font-size: 13px;
-    }
-
-    thead {
-      background: #ffb300;
-      color: #000;
-    }
-
-    th,
-    td {
-      padding: 6px 4px;
-      border-bottom: 1px solid #e0e0e0;
-      text-align: left;
-    }
-
-    th:nth-child(1),
-    td:nth-child(1) {
-      width: 40px;
-      text-align: center;
-    }
-
-    th:nth-child(2) {
-      min-width: 160px;
-    }
-
-    th:nth-child(3),
-    th:nth-child(4),
-    th:nth-child(5),
-    th:nth-child(6) {
-      text-align: center;
-    }
-
-    tbody tr:nth-child(even) {
-      background: #fafafa;
-    }
-
-    tr.pago {
-      background: #c8e6c9 !important; /* verde claro */
-    }
-
-    tr.prometeu {
-      background: #fff9c4 !important; /* amarelo claro */
-    }
-
-    tr.nao-entrou {
-      background: #eeeeee !important; /* cinza claro */
-    }
-
-    select,
-    button {
-      font-size: 12px;
-      padding: 4px 6px;
-    }
-
-    button {
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      background: #f5f5f5;
-      cursor: pointer;
-    }
-
-    button.ativo {
-      background: #4caf50;
-      color: #fff;
-      border-color: #388e3c;
-      font-weight: 600;
-    }
-
-    .status-select {
-      width: 120px;
-    }
-
-    @media (max-width: 720px) {
-      th,
-      td {
-        padding: 5px 3px;
-      }
-      .status-select {
-        width: 110px;
-      }
-      header {
-        font-size: 15px;
-      }
-    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    header{background:#000;color:#fff;text-align:center;padding:14px 10px}
+    header .t1{font-weight:1000;letter-spacing:1px;text-transform:uppercase;font-size:16px}
+    header .t2{opacity:.85;font-size:12px;margin-top:4px}
+    .wrap{max-width:1040px;margin:0 auto;padding:12px}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 14px;margin-bottom:12px}
+    label{font-size:13px;font-weight:900;display:block;margin:8px 0 6px}
+    input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #d9dde3;font-size:16px;background:#fff}
+    textarea{min-height:140px;resize:vertical}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .row>div{flex:1;min-width:180px}
+    .btn{width:100%;border:0;border-radius:12px;padding:12px;font-weight:1000;cursor:pointer;margin-top:8px}
+    .btn.primary{background:var(--primary);color:#fff}
+    .btn.gray{background:var(--gray);color:#fff}
+    .btn.danger{background:var(--danger);color:#fff}
+    .small{font-size:12px;color:var(--muted);line-height:1.35}
+    .ok{color:#2b8a3e;font-weight:900;font-size:13px;margin-top:8px}
+    .warn{color:var(--danger);font-weight:900;font-size:13px;margin-top:8px}
+    .pill{display:inline-block;padding:3px 10px;border-radius:999px;background:#e7f5ff;color:var(--primary);font-weight:900;font-size:12px}
+    .mono{font-family:ui-monospace, Menlo, Consolas, monospace}
+    .box{background:#f8f9fa;border:1px solid #e9ecef;border-radius:12px;padding:10px;margin-top:8px}
+    .divider{height:1px;background:#e9ecef;margin:12px 0}
+    .right{display:flex;gap:8px;flex-wrap:wrap}
+    .right button{flex:1;min-width:160px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    @media(max-width:720px){.grid{grid-template-columns:1fr}}
+    .kpi{background:#fff;border:1px solid #e9ecef;border-radius:12px;padding:10px}
+    .kpi .h{font-weight:1000;font-size:14px}
+    .kpi .v{font-weight:1100;font-size:18px;margin-top:4px}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{padding:10px;border-bottom:1px solid #e9ecef;text-align:left;font-size:14px}
+    th{font-weight:1000}
+    .neg{color:#c92a2a;font-weight:1000}
+    .pos{color:#2b8a3e;font-weight:1000}
   </style>
 </head>
 <body>
-  <header>Bolão Quina - Controle de Pagamentos</header>
+<header>
+  <div class="t1">JULIANO — FECHAMENTO + NOTA A PRAZO</div>
+  <div class="t2">Cole do WhatsApp e IMPORTAR. Consolida 3 unidades e controla saldo por cliente (a prazo).</div>
+</header>
 
-  <div class="container">
-    <div class="resumo" id="resumo">
-      <div><strong>Total nomes:</strong> <span id="totalNomes">0</span></div>
-      <div><strong>Pagos:</strong> <span id="totalPagos">0</span></div>
-      <div><strong>Prometeram:</strong> <span id="totalPrometeram">0</span></div>
-      <div><strong>Não entraram:</strong> <span id="totalNaoEntraram">0</span></div>
+<div class="wrap">
+
+  <div class="card">
+    <div class="pill">1) IMPORTAR DO WHATSAPP</div>
+    <label>Cole aqui a mensagem recebida da unidade</label>
+    <textarea id="paste" class="mono" placeholder="UNIDADE: FAVORITO
+DATA: 2026-02-13
+CARROS: 27
+PIX: 1230.00
+DINHEIRO: 420.00
+CREDITO: 980.00
+DEBITO: 350.00
+PRAZO: CLIENTE=Fazenda Santa Clara; TIPO=VENDA; VALOR=50.00; OBS=Lavagem caminhonete
+PRAZO: CLIENTE=Fazenda Santa Clara; TIPO=PAGAMENTO; VALOR=30.00; OBS=PIX"></textarea>
+
+    <div class="right">
+      <button class="btn gray" id="btnExample">Colocar exemplo</button>
+      <button class="btn primary" id="btnImport">IMPORTAR</button>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Nº</th>
-          <th>Nome</th>
-          <th>Status</th>
-          <th>Pagou Waldecir</th>
-          <th>Pagou Lotérica</th>
-          <th>Obs</th>
-        </tr>
-      </thead>
-      <tbody id="tabelaParticipantes"></tbody>
-    </table>
+    <div id="msg" class="ok" style="display:none"></div>
+
+    <div class="small" style="margin-top:8px">
+      Importa fechamento do dia + movimentações PRAZO. Tudo fica salvo só no iPhone do Juliano.
+    </div>
   </div>
 
-  <script>
-    // Lista de participantes (do PDF)
-    const participants = [
-      { id: 1, name: "Abbas" },
-      { id: 2, name: "Adicionaldo Reis" },
-      { id: 3, name: "André Massa" },
-      { id: 4, name: "Antenor Rabelo" },
-      { id: 5, name: "Aníbal (Café)" },
-      { id: 6, name: "Carlos Alberto (BTG)" },
-      { id: 7, name: "Carlos Henrique" },
-      { id: 8, name: "Cristiano Maia Quintão" },
-      { id: 9, name: "Dalel Elias" },
-      { id: 10, name: "Damião" },
-      { id: 11, name: "Daniel Franco Costa" },
-      { id: 12, name: "Daniel Mascia" },
-      { id: 13, name: "Delcio Tannus" },
-      { id: 14, name: "Dr. Dásio Pires" },
-      { id: 15, name: "Dr. Fernando Martinelle" },
-      { id: 16, name: "Dr. Laerte" },
-      { id: 17, name: "Dr. Rubens (Check Up)" },
-      { id: 18, name: "Durval" },
-      { id: 19, name: "Eduardo Santana" },
-      { id: 20, name: "Eliamar Rodrigues/Abdala" },
-      { id: 21, name: "Equipe Financeira Copenhague C. Sócios" },
-      { id: 22, name: "Equipe Jinjin (Uber)" },
-      { id: 23, name: "Evelyn Tanache R. Matoso" },
-      { id: 24, name: "Eudes" },
-      { id: 25, name: "Fabiano F. C. Batista" },
-      { id: 26, name: "Fabiano Sena" },
-      { id: 27, name: "Flávia (Nuty Bavariam)" },
-      { id: 28, name: "Flávio Luiz Lobato" },
-      { id: 29, name: "Gabriel Aquery" },
-      { id: 30, name: "Henrique A Gonçalves" },
-      { id: 31, name: "Hudson Ferreira" },
-      { id: 32, name: "Hugo Tannus Luz" },
-      { id: 33, name: "Hélton Regis" },
-      { id: 34, name: "Ivair R. Souza" },
-      { id: 35, name: "Jeferson (Eq. J.J. Center)" },
-      { id: 36, name: "Jesse James" },
-      { id: 37, name: "Joana / Wagner" },
-      { id: 38, name: "José Humberto (Major)" },
-      { id: 39, name: "José Reinaldo (Cosam)" },
-      { id: 40, name: "João Paulo (J.P)" },
-      { id: 41, name: "João (Victor Hugo)" },
-      { id: 42, name: "Keyno Carvalho" },
-      { id: 43, name: "Leandro Tawil" },
-      { id: 44, name: "Leonardo Mascia" },
-      { id: 45, name: "Leonardo Ramalho Bastos" },
-      { id: 46, name: "Lorenzo Tannus" },
-      { id: 47, name: "Lucimar" },
-      { id: 48, name: "Luiz César Amaral" },
-      { id: 49, name: "Luiz César Blanchine" },
-      { id: 50, name: "Luiz Heugenio (cartório)" },
-      { id: 51, name: "Luiz Humberto Villar" },
-      { id: 52, name: "Luzenilson (Elite const.)" },
-      { id: 53, name: "Marcelo Loureiro" },
-      { id: 54, name: "Marcelo M. Pagotto" },
-      { id: 55, name: "Marco Antônio Rodrigues" },
-      { id: 56, name: "Marco Andrey" },
-      { id: 57, name: "Marco Aurélio" },
-      { id: 58, name: "Marcone da Silva" },
-      { id: 59, name: "Marcos Elidio" },
-      { id: 60, name: "Mateus Moreira" },
-      { id: 61, name: "Müller" },
-      { id: 62, name: "Murilo Dorazio" },
-      { id: 63, name: "Marcia L. Almeida" },
-      { id: 64, name: "Naeim Haissam" },
-      { id: 65, name: "Nelson Lúcio / Fatima" },
-      { id: 66, name: "Ostro games" },
-      { id: 67, name: "Paulo Márcio Bittar" },
-      { id: 68, name: "Paulo Roberto Nascimento" },
-      { id: 69, name: "Pedro Guimarães" },
-      { id: 70, name: "Radouane E. Salemy" },
-      { id: 71, name: "Ramira" },
-      { id: 72, name: "Renner" },
-      { id: 73, name: "Ricardinho" },
-      { id: 74, name: "Ricardo Franco Santos" },
-      { id: 75, name: "Roberto (Fompiani)" },
-      { id: 76, name: "Roberto Elias Tanache" },
-      { id: 77, name: "Rodrigo Nunes" },
-      { id: 78, name: "Rubens de Freitas Neto" },
-      { id: 79, name: "Régio I. Kaminice" },
-      { id: 80, name: "Saulo (bombeiro)" },
-      { id: 81, name: "Sebastião Carvalho" },
-      { id: 82, name: "Suleide" },
-      { id: 83, name: "Otavico (Luiz O. Carneiro)" },
-      { id: 84, name: "Toninho (Akformas)" },
-      { id: 85, name: "Túlio de Almeida Cedro" },
-      { id: 86, name: "Valdo" },
-      { id: 87, name: "Vera Lucia Loureiro" },
-      { id: 88, name: "Vicente C. Franco" },
-      { id: 89, name: "Wagner Luiz" },
-      { id: 90, name: "Waldecir Rodrigues" },
-      { id: 91, name: "William" },
-      { id: 92, name: "Wissam" }
-    ];
+  <div class="card">
+    <div class="pill">2) CONSULTA FECHAMENTO (DIA OU PERÍODO)</div>
 
-    function getStorageKey(id) {
-      return "bolao_quina_participante_" + id;
+    <div class="row">
+      <div>
+        <label>Ver um dia</label>
+        <input id="viewDay" type="date" />
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button class="btn gray" id="btnToday">Hoje</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div>
+        <label>Período — data inicial</label>
+        <input id="fromDate" type="date" />
+      </div>
+      <div>
+        <label>Período — data final</label>
+        <input id="toDate" type="date" />
+      </div>
+    </div>
+
+    <div class="right">
+      <button class="btn gray" id="btnPeriod">Gerar período</button>
+      <button class="btn gray" id="btnCopy">Copiar resumo</button>
+      <button class="btn primary" id="btnWhats">Enviar resumo no WhatsApp</button>
+      <button class="btn danger" id="btnClearAll">Apagar tudo (cuidado)</button>
+    </div>
+
+    <div class="divider"></div>
+    <h3 style="margin:0 0 8px">Resultado (fechamento)</h3>
+    <div id="result"></div>
+  </div>
+
+  <div class="card">
+    <div class="pill">3) CONTAS A PRAZO (SALDO POR CLIENTE)</div>
+
+    <div class="row">
+      <div>
+        <label>Filtro (cliente contém)</label>
+        <input id="filterClient" placeholder="Ex.: fazenda" />
+      </div>
+      <div>
+        <label>Unidade</label>
+        <select id="filterUnit">
+          <option value="TODAS">Todas</option>
+          <option value="FAVORITO">Favorito</option>
+          <option value="PREFERIDO">Preferido</option>
+          <option value="PREDILETO">Predileto</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="small">
+      Saldo > 0 = cliente devendo (a receber). Saldo = 0 = quitado.
+    </div>
+
+    <div id="prazoTable"></div>
+  </div>
+
+</div>
+
+<script>
+  const STORE = "juliano_painel_fechamento_prazo_v1";
+  const UNITS = ["FAVORITO","PREFERIDO","PREDILETO"];
+
+  function el(id){ return document.getElementById(id); }
+  function pad2(n){ return String(n).padStart(2,"0"); }
+  function todayISO(){
+    const d=new Date();
+    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  }
+  function showMsg(text, ok=true){
+    const m = el("msg");
+    m.style.display="block";
+    m.className = ok ? "ok" : "warn";
+    m.textContent = text;
+    setTimeout(()=>m.style.display="none", 3200);
+  }
+  function fmtMoney(n){
+    n = Number(n||n||0);
+    return "R$ " + Number(n||0).toFixed(2).replace(".",",");
+  }
+
+  function loadDB(){
+    const raw = localStorage.getItem(STORE);
+    if(!raw) return { days:{}, prazoLedger:{} };
+    try{
+      const j = JSON.parse(raw);
+      if(!j.days) j.days = {};
+      if(!j.prazoLedger) j.prazoLedger = {}; // key: unit|client -> balance
+      return j;
+    }catch(e){
+      return { days:{}, prazoLedger:{} };
     }
-
-    function loadState(id) {
-      const raw = localStorage.getItem(getStorageKey(id));
-      if (!raw) {
-        return {
-          status: "nao_entrou", // nao_entrou | prometeu | pago
-          pagouWaldecir: false,
-          pagouLoterica: false,
-          obs: ""
-        };
-      }
-      try {
-        return JSON.parse(raw);
-      } catch (e) {
-        return {
-          status: "nao_entrou",
-          pagouWaldecir: false,
-          pagouLoterica: false,
-          obs: ""
-        };
-      }
+  }
+  function saveDB(db){ localStorage.setItem(STORE, JSON.stringify(db)); }
+  function ensureDay(db, date){
+    if(!db.days[date]){
+      db.days[date] = { FAVORITO:null, PREFERIDO:null, PREDILETO:null };
     }
+    return db.days[date];
+  }
 
-    function saveState(id, state) {
-      localStorage.setItem(getStorageKey(id), JSON.stringify(state));
+  function parseMoneyLoose(s){
+    let t = (s||"").toString().trim().replace(/\s/g,"");
+    t = t.replace(/[^\d\.,-]/g,"");
+    if(t.includes(",") && t.includes(".")){
+      t = t.replace(/\./g,"").replace(",",".");
+    }else{
+      if(t.includes(",")) t = t.replace(",",".");
     }
-
-    function atualizarResumo() {
-      const total = participants.length;
-      let pagos = 0;
-      let prometeram = 0;
-      let naoEntraram = 0;
-
-      participants.forEach((p) => {
-        const st = loadState(p.id);
-        let status = st.status;
-
-        if (st.pagouWaldecir || st.pagouLoterica) {
-          status = "pago";
-        }
-
-        if (status === "pago") pagos++;
-        else if (status === "prometeu") prometeram++;
-        else naoEntraram++;
-      });
-
-      document.getElementById("totalNomes").textContent = total;
-      document.getElementById("totalPagos").textContent = pagos;
-      document.getElementById("totalPrometeram").textContent = prometeram;
-      document.getElementById("totalNaoEntraram").textContent = naoEntraram;
+    const n = Number(t);
+    return isNaN(n) ? null : n;
+  }
+  function parseDateFlexible(s){
+    const t = (s||"").trim();
+    if(/^\d{4}-\d{2}-\d{2}$/.test(t)) return t;
+    const m = t.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if(m) return `${m[3]}-${m[2]}-${m[1]}`;
+    return null;
+  }
+  function extractValue(lines, key){
+    const re = new RegExp("^\\s*" + key + "\\s*[:=\\-]\\s*(.+)$","i");
+    for(const line of lines){
+      const m = line.match(re);
+      if(m && m[1]) return m[1].trim();
     }
+    return null;
+  }
 
-    function aplicarCoresLinha(tr, state) {
-      tr.classList.remove("pago", "prometeu", "nao-entrou");
+  function parsePrazoLine(line){
+    // PRAZO: CLIENTE=...; TIPO=VENDA|PAGAMENTO; VALOR=12.34; OBS=...
+    if(!/^PRAZO\s*:/i.test(line)) return null;
+    const body = line.split(":").slice(1).join(":").trim();
+    const parts = body.split(";").map(p=>p.trim()).filter(Boolean);
 
-      let status = state.status;
-      if (state.pagouWaldecir || state.pagouLoterica) {
-        status = "pago";
-      }
-
-      if (status === "pago") {
-        tr.classList.add("pago");
-      } else if (status === "prometeu") {
-        tr.classList.add("prometeu");
-      } else {
-        tr.classList.add("nao-entrou");
-      }
+    const obj = {};
+    for(const p of parts){
+      const [k, ...rest] = p.split("=");
+      if(!k || !rest.length) continue;
+      obj[k.trim().toUpperCase()] = rest.join("=").trim();
     }
+    const client = obj["CLIENTE"];
+    const tipo = (obj["TIPO"]||"").toUpperCase();
+    const valor = parseMoneyLoose(obj["VALOR"]);
+    const obs = obj["OBS"] || "";
 
-    function criarLinha(participante) {
-      const state = loadState(participante.id);
-      const tr = document.createElement("tr");
-      tr.dataset.id = participante.id;
+    if(!client || !["VENDA","PAGAMENTO"].includes(tipo) || valor===null) return null;
+    return { client, tipo, valor:Number(valor), obs };
+  }
 
-      const tdId = document.createElement("td");
-      tdId.textContent = participante.id;
+  function applyPrazoTx(db, unit, tx){
+    const client = tx.client.trim();
+    const key = `${unit}|${client}`; // separa por unidade
+    const cur = Number(db.prazoLedger[key] || 0);
 
-      const tdNome = document.createElement("td");
-      tdNome.textContent = participante.name;
+    // VENDA aumenta saldo (a receber). PAGAMENTO reduz saldo.
+    const next = tx.tipo === "VENDA" ? (cur + tx.valor) : (cur - tx.valor);
+    db.prazoLedger[key] = Number(next.toFixed(2));
+  }
 
-      const tdStatus = document.createElement("td");
-      const select = document.createElement("select");
-      select.className = "status-select";
-      [
-        { value: "nao_entrou", label: "Não entrou" },
-        { value: "prometeu", label: "Prometeu" },
-        { value: "pago", label: "Pago" }
-      ].forEach((opt) => {
-        const o = document.createElement("option");
-        o.value = opt.value;
-        o.textContent = opt.label;
-        select.appendChild(o);
-      });
-      select.value = state.status || "nao_entrou";
-      tdStatus.appendChild(select);
+  function totalRec(r){
+    return (r.pix||0)+(r.cash||0)+(r.credit||0)+(r.debit||0);
+  }
+  function sumRec(a,b){
+    return {
+      cars:(a.cars||0)+(b.cars||0),
+      pix:(a.pix||0)+(b.pix||0),
+      cash:(a.cash||0)+(b.cash||0),
+      credit:(a.credit||0)+(b.credit||0),
+      debit:(a.debit||0)+(b.debit||0),
+    };
+  }
+  function kpi(title, r){
+    const t = totalRec(r);
+    return `
+      <div class="box">
+        <div class="grid">
+          <div class="kpi"><div class="h">${title}</div><div class="small">Carros: <b>${r.cars||0}</b></div></div>
+          <div class="kpi"><div class="h">Total</div><div class="v">${fmtMoney(t)}</div><div class="small">PIX + Dinheiro + Crédito + Débito</div></div>
+          <div class="kpi"><div class="h">PIX</div><div class="v">${fmtMoney(r.pix||0)}</div></div>
+          <div class="kpi"><div class="h">Dinheiro</div><div class="v">${fmtMoney(r.cash||0)}</div></div>
+          <div class="kpi"><div class="h">Crédito</div><div class="v">${fmtMoney(r.credit||0)}</div></div>
+          <div class="kpi"><div class="h">Débito</div><div class="v">${fmtMoney(r.debit||0)}</div></div>
+        </div>
+      </div>
+    `;
+  }
 
-      const tdWaldecir = document.createElement("td");
-      const btnWal = document.createElement("button");
-      btnWal.textContent = "OK Waldecir";
-      if (state.pagouWaldecir) btnWal.classList.add("ativo");
-      tdWaldecir.style.textAlign = "center";
-      tdWaldecir.appendChild(btnWal);
+  function dateToTime(d){ return new Date(d + "T00:00:00").getTime(); }
 
-      const tdLoterica = document.createElement("td");
-      const btnLot = document.createElement("button");
-      btnLot.textContent = "OK Lotérica";
-      if (state.pagouLoterica) btnLot.classList.add("ativo");
-      tdLoterica.style.textAlign = "center";
-      tdLoterica.appendChild(btnLot);
+  let lastSummary = "";
 
-      const tdObs = document.createElement("td");
-      const inputObs = document.createElement("input");
-      inputObs.type = "text";
-      inputObs.placeholder = "Obs (ex: talão, data...)";
-      inputObs.style.width = "100%";
-      inputObs.value = state.obs || "";
-      tdObs.appendChild(inputObs);
+  function makeSummaryDay(date){
+    const db = loadDB();
+    const day = ensureDay(db, date);
+    const cons = UNITS.reduce((acc,u)=> day[u] ? sumRec(acc, day[u]) : acc, {cars:0,pix:0,cash:0,credit:0,debit:0});
 
-      tr.appendChild(tdId);
-      tr.appendChild(tdNome);
-      tr.appendChild(tdStatus);
-      tr.appendChild(tdWaldecir);
-      tr.appendChild(tdLoterica);
-      tr.appendChild(tdObs);
-
-      // Eventos
-      select.addEventListener("change", () => {
-        const st = loadState(participante.id);
-        st.status = select.value;
-        // se marcou pago no status, não mexe nos botões
-        saveState(participante.id, st);
-        aplicarCoresLinha(tr, st);
-        atualizarResumo();
-      });
-
-      btnWal.addEventListener("click", () => {
-        const st = loadState(participante.id);
-        st.pagouWaldecir = !st.pagouWaldecir;
-        if (st.pagouWaldecir) {
-          btnWal.classList.add("ativo");
-          st.status = "pago";
-        } else {
-          btnWal.classList.remove("ativo");
-        }
-        saveState(participante.id, st);
-        aplicarCoresLinha(tr, st);
-        atualizarResumo();
-      });
-
-      btnLot.addEventListener("click", () => {
-        const st = loadState(participante.id);
-        st.pagouLoterica = !st.pagouLoterica;
-        if (st.pagouLoterica) {
-          btnLot.classList.add("ativo");
-          st.status = "pago";
-        } else {
-          btnLot.classList.remove("ativo");
-        }
-        saveState(participante.id, st);
-        aplicarCoresLinha(tr, st);
-        atualizarResumo();
-      });
-
-      inputObs.addEventListener("change", () => {
-        const st = loadState(participante.id);
-        st.obs = inputObs.value;
-        saveState(participante.id, st);
-      });
-
-      aplicarCoresLinha(tr, state);
-      return tr;
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const tbody = document.getElementById("tabelaParticipantes");
-      participants.forEach((p) => {
-        const row = criarLinha(p);
-        tbody.appendChild(row);
-      });
-      atualizarResumo();
+    const lines = [];
+    lines.push(`LAVA RÁPIDO FAVORITO — FECHAMENTO ${date}`);
+    UNITS.forEach(u=>{
+      const r = day[u];
+      if(!r) lines.push(`${u}: sem fechamento`);
+      else lines.push(`${u} — Carros: ${r.cars||0} | PIX: ${fmtMoney(r.pix||0)} | Dinheiro: ${fmtMoney(r.cash||0)} | Crédito: ${fmtMoney(r.credit||0)} | Débito: ${fmtMoney(r.debit||0)} | Total: ${fmtMoney(totalRec(r))}`);
     });
-  </script>
+    lines.push(`--- CONSOLIDADO ---`);
+    lines.push(`Carros: ${cons.cars||0}`);
+    lines.push(`PIX: ${fmtMoney(cons.pix)} | Dinheiro: ${fmtMoney(cons.cash)} | Crédito: ${fmtMoney(cons.credit)} | Débito: ${fmtMoney(cons.debit)}`);
+    lines.push(`Total: ${fmtMoney(totalRec(cons))}`);
+    return lines.join("\n");
+  }
+
+  function renderDay(date){
+    const db = loadDB();
+    const day = ensureDay(db, date);
+
+    let html = `<div class="small"><b>Dia:</b> ${date}</div>`;
+    let cons = {cars:0,pix:0,cash:0,credit:0,debit:0};
+    let any=false;
+
+    UNITS.forEach(u=>{
+      if(day[u]){
+        any=true;
+        html += kpi(u, day[u]);
+        cons = sumRec(cons, day[u]);
+      }else{
+        html += `<div class="box"><b>${u}</b>: <span class="small">sem fechamento ainda.</span></div>`;
+      }
+    });
+
+    html += `<div class="divider"></div>`;
+    html += any ? kpi("CONSOLIDADO (3 unidades)", cons) : `<div class="box"><b>CONSOLIDADO</b>: <span class="small">sem dados neste dia.</span></div>`;
+
+    el("result").innerHTML = html;
+    lastSummary = makeSummaryDay(date);
+  }
+
+  function renderPeriod(from,to){
+    const db = loadDB();
+    const t1 = dateToTime(from), t2 = dateToTime(to);
+    if(isNaN(t1)||isNaN(t2) || t2<t1){ alert("Período inválido."); return; }
+
+    const perUnit = {
+      FAVORITO:{cars:0,pix:0,cash:0,credit:0,debit:0},
+      PREFERIDO:{cars:0,pix:0,cash:0,credit:0,debit:0},
+      PREDILETO:{cars:0,pix:0,cash:0,credit:0,debit:0},
+    };
+    let daysCount=0;
+
+    for(const dateStr of Object.keys(db.days)){
+      const td = dateToTime(dateStr);
+      if(td>=t1 && td<=t2){
+        const day = ensureDay(db, dateStr);
+        const hasAny = UNITS.some(u=>day[u]);
+        if(hasAny) daysCount++;
+        UNITS.forEach(u=>{
+          if(day[u]) perUnit[u] = sumRec(perUnit[u], day[u]);
+        });
+      }
+    }
+
+    let cons = {cars:0,pix:0,cash:0,credit:0,debit:0};
+    let html = `<div class="small"><b>Período:</b> ${from} até ${to} <span class="pill">${daysCount} dia(s) com registro</span></div>`;
+    UNITS.forEach(u=>{
+      html += kpi(u, perUnit[u]);
+      cons = sumRec(cons, perUnit[u]);
+    });
+    html += `<div class="divider"></div>`;
+    html += kpi("CONSOLIDADO (3 unidades)", cons);
+
+    el("result").innerHTML = html;
+
+    // resumo
+    const lines=[];
+    lines.push(`LAVA RÁPIDO FAVORITO — PERÍODO ${from} a ${to}`);
+    lines.push(`Dias com registro: ${daysCount}`);
+    UNITS.forEach(u=>{
+      const r=perUnit[u];
+      lines.push(`${u} — Carros: ${r.cars||0} | PIX: ${fmtMoney(r.pix||0)} | Dinheiro: ${fmtMoney(r.cash||0)} | Crédito: ${fmtMoney(r.credit||0)} | Débito: ${fmtMoney(r.debit||0)} | Total: ${fmtMoney(totalRec(r))}`);
+    });
+    lines.push(`--- CONSOLIDADO ---`);
+    lines.push(`Carros: ${cons.cars||0}`);
+    lines.push(`PIX: ${fmtMoney(cons.pix)} | Dinheiro: ${fmtMoney(cons.cash)} | Crédito: ${fmtMoney(cons.credit)} | Débito: ${fmtMoney(cons.debit)}`);
+    lines.push(`Total: ${fmtMoney(totalRec(cons))}`);
+    lastSummary = lines.join("\n");
+  }
+
+  function renderPrazoTable(){
+    const db = loadDB();
+    const filter = (el("filterClient").value||"").trim().toLowerCase();
+    const unitFilter = el("filterUnit").value;
+
+    // agrega por cliente (e por unidade)
+    const rows = [];
+    for(const key of Object.keys(db.prazoLedger)){
+      const [unit, ...clientParts] = key.split("|");
+      const client = clientParts.join("|");
+      const bal = Number(db.prazoLedger[key]||0);
+
+      if(unitFilter !== "TODAS" && unit !== unitFilter) continue;
+      if(filter && !client.toLowerCase().includes(filter)) continue;
+
+      rows.push({unit, client, bal});
+    }
+
+    rows.sort((a,b)=> b.bal - a.bal);
+
+    // consolidado por cliente (se TODAS)
+    let consolidated = [];
+    if(unitFilter === "TODAS"){
+      const map = new Map();
+      rows.forEach(r=>{
+        const cur = map.get(r.client) || 0;
+        map.set(r.client, cur + r.bal);
+      });
+      consolidated = Array.from(map.entries()).map(([client, bal])=>({client, bal}));
+      consolidated.sort((a,b)=> b.bal - a.bal);
+    }
+
+    let html = "";
+
+    if(unitFilter === "TODAS"){
+      html += `<div class="box"><b>Consolidado por cliente (3 unidades)</b></div>`;
+      if(!consolidated.length){
+        html += `<div class="box"><span class="small">Sem dados de prazo.</span></div>`;
+      } else {
+        html += `<table><thead><tr><th>Cliente</th><th>Saldo (a receber)</th></tr></thead><tbody>`;
+        consolidated.forEach(r=>{
+          const cls = r.bal>0 ? "pos" : (r.bal<0 ? "neg" : "");
+          html += `<tr><td>${r.client}</td><td class="${cls}">${fmtMoney(r.bal)}</td></tr>`;
+        });
+        html += `</tbody></table>`;
+      }
+
+      html += `<div class="divider"></div>`;
+      html += `<div class="box"><b>Detalhado por unidade</b></div>`;
+    }
+
+    if(!rows.length){
+      html += `<div class="box"><span class="small">Sem dados de prazo para este filtro.</span></div>`;
+    } else {
+      html += `<table><thead><tr><th>Unidade</th><th>Cliente</th><th>Saldo</th></tr></thead><tbody>`;
+      rows.forEach(r=>{
+        const cls = r.bal>0 ? "pos" : (r.bal<0 ? "neg" : "");
+        html += `<tr><td>${r.unit}</td><td>${r.client}</td><td class="${cls}">${fmtMoney(r.bal)}</td></tr>`;
+      });
+      html += `</tbody></table>`;
+    }
+
+    el("prazoTable").innerHTML = html;
+  }
+
+  // IMPORTAR
+  el("btnImport").addEventListener("click", ()=>{
+    const text = el("paste").value.trim();
+    if(!text){ showMsg("Cole a mensagem primeiro.", false); return; }
+    const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+
+    const unitRaw = extractValue(lines, "UNIDADE");
+    const dateRaw = extractValue(lines, "DATA");
+    const carsRaw = extractValue(lines, "CARROS");
+    const pixRaw = extractValue(lines, "PIX");
+    const cashRaw = extractValue(lines, "DINHEIRO");
+    const creditRaw = extractValue(lines, "CREDITO");
+    const debitRaw = extractValue(lines, "DEBITO");
+
+    if(!unitRaw || !dateRaw || !carsRaw || !pixRaw || !cashRaw || !creditRaw || !debitRaw){
+      showMsg("Mensagem incompleta. Precisa: UNIDADE, DATA, CARROS, PIX, DINHEIRO, CREDITO, DEBITO.", false);
+      return;
+    }
+
+    const unit = unitRaw.toUpperCase().trim();
+    if(!UNITS.includes(unit)){
+      showMsg(`UNIDADE inválida: ${unitRaw}. Use FAVORITO, PREFERIDO, PREDILETO.`, false);
+      return;
+    }
+
+    const date = parseDateFlexible(dateRaw);
+    if(!date){ showMsg(`DATA inválida: ${dateRaw}. Use YYYY-MM-DD ou DD/MM/YYYY.`, false); return; }
+
+    const carsN = parseMoneyLoose(carsRaw);
+    const pix = parseMoneyLoose(pixRaw);
+    const cash = parseMoneyLoose(cashRaw);
+    const credit = parseMoneyLoose(creditRaw);
+    const debit = parseMoneyLoose(debitRaw);
+
+    if([carsN,pix,cash,credit,debit].some(v=>v===null)){
+      showMsg("Algum valor numérico inválido.", false);
+      return;
+    }
+    if([carsN,pix,cash,credit,debit].some(v=>v<0)){
+      showMsg("Não aceito número negativo.", false);
+      return;
+    }
+
+    const db = loadDB();
+    const day = ensureDay(db, date);
+
+    day[unit] = {
+      cars: Math.round(Number(carsN)),
+      pix:Number(pix),
+      cash:Number(cash),
+      credit:Number(credit),
+      debit:Number(debit),
+      imported_at: new Date().toISOString()
+    };
+
+    // Importar PRAZO lines
+    const prazoLines = lines.filter(l=>/^PRAZO\s*:/i.test(l));
+    let prazoCount = 0;
+    for(const pl of prazoLines){
+      const tx = parsePrazoLine(pl);
+      if(!tx) continue;
+      applyPrazoTx(db, unit, tx);
+      prazoCount++;
+    }
+
+    saveDB(db);
+
+    el("paste").value = "";
+    el("viewDay").value = date;
+    showMsg(`Importado: ${unit} em ${date} | PRAZO: ${prazoCount} lançamento(s)`, true);
+
+    renderDay(date);
+    renderPrazoTable();
+  });
+
+  el("btnExample").addEventListener("click", ()=>{
+    el("paste").value =
+`UNIDADE: FAVORITO
+DATA: ${todayISO()}
+CARROS: 27
+PIX: 1230.00
+DINHEIRO: 420.00
+CREDITO: 980.00
+DEBITO: 350.00
+PRAZO: CLIENTE=Fazenda Santa Clara; TIPO=VENDA; VALOR=50.00; OBS=Lavagem caminhonete
+PRAZO: CLIENTE=Fazenda Santa Clara; TIPO=PAGAMENTO; VALOR=30.00; OBS=PIX`;
+  });
+
+  // Consulta
+  el("btnToday").addEventListener("click", ()=>{
+    const d = todayISO();
+    el("viewDay").value = d;
+    renderDay(d);
+  });
+  el("viewDay").addEventListener("change", ()=>{
+    const d = el("viewDay").value || todayISO();
+    renderDay(d);
+  });
+  el("btnPeriod").addEventListener("click", ()=>{
+    const f=el("fromDate").value, t=el("toDate").value;
+    if(!f || !t){ alert("Informe data inicial e final."); return; }
+    renderPeriod(f,t);
+  });
+
+  el("btnCopy").addEventListener("click", async ()=>{
+    const txt = (lastSummary||"").trim();
+    if(!txt){ showMsg("Gere um dia ou período primeiro.", false); return; }
+    try{
+      await navigator.clipboard.writeText(txt);
+      showMsg("Resumo copiado.", true);
+    }catch(e){
+      const ta=document.createElement("textarea");
+      ta.value=txt; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); document.body.removeChild(ta);
+      showMsg("Resumo copiado.", true);
+    }
+  });
+
+  el("btnWhats").addEventListener("click", ()=>{
+    const txt = (lastSummary||"").trim();
+    if(!txt){ showMsg("Gere um dia ou período primeiro.", false); return; }
+    window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, "_blank");
+  });
+
+  el("btnClearAll").addEventListener("click", ()=>{
+    if(!confirm("Apagar TUDO do iPhone do Juliano? Fechamentos + prazo.")) return;
+    localStorage.removeItem(STORE);
+    showMsg("Apagado.", true);
+    const d = el("viewDay").value || todayISO();
+    renderDay(d);
+    renderPrazoTable();
+  });
+
+  // Filtros prazo
+  el("filterClient").addEventListener("input", renderPrazoTable);
+  el("filterUnit").addEventListener("change", renderPrazoTable);
+
+  // init
+  const d = todayISO();
+  el("viewDay").value = d;
+
+  const dt = new Date();
+  const to = d;
+  const fromD = new Date(dt.getTime() - 6*24*3600*1000);
+  const from = `${fromD.getFullYear()}-${pad2(fromD.getMonth()+1)}-${pad2(fromD.getDate())}`;
+  el("fromDate").value = from;
+  el("toDate").value = to;
+
+  renderDay(d);
+  renderPrazoTable();
+</script>
 </body>
 </html>
