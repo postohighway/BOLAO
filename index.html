@@ -2,12 +2,12 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Painel Juliano — Lava Rápido Favorito</title>
+  <title>Juliano — Painel do Dono (3 Unidades + Nota a Prazo)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root{
       --bg:#f4f6f8; --card:#fff; --text:#111; --muted:#666;
-      --primary:#0b7285; --danger:#c92a2a; --gray:#868e96;
+      --primary:#0b7285; --danger:#c92a2a; --gray:#868e96; --ok:#2b8a3e;
       --shadow:0 1px 3px rgba(0,0,0,.12); --radius:14px;
     }
     *{box-sizing:border-box}
@@ -21,135 +21,272 @@
     input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #d9dde3;font-size:16px;background:#fff}
     textarea{min-height:140px;resize:vertical}
     .row{display:flex;gap:10px;flex-wrap:wrap}
-    .row>div{flex:1;min-width:180px}
-    .btn{width:100%;border:0;border-radius:12px;padding:12px;font-weight:1000;cursor:pointer;margin-top:8px}
+    .row>div{flex:1;min-width:210px}
+    .btn{border:0;border-radius:12px;padding:12px 14px;font-weight:1000;cursor:pointer}
     .btn.primary{background:var(--primary);color:#fff}
     .btn.gray{background:var(--gray);color:#fff}
     .btn.danger{background:var(--danger);color:#fff}
+    .btn.ok{background:var(--ok);color:#fff}
+    .btn.full{width:100%}
     .small{font-size:12px;color:var(--muted);line-height:1.35}
-    .ok{color:#2b8a3e;font-weight:900;font-size:13px;margin-top:8px}
-    .warn{color:var(--danger);font-weight:900;font-size:13px;margin-top:8px}
     .pill{display:inline-block;padding:3px 10px;border-radius:999px;background:#e7f5ff;color:var(--primary);font-weight:900;font-size:12px}
-    .mono{font-family:ui-monospace, Menlo, Consolas, monospace}
     .box{background:#f8f9fa;border:1px solid #e9ecef;border-radius:12px;padding:10px;margin-top:8px}
     .divider{height:1px;background:#e9ecef;margin:12px 0}
+    .mono{font-family:ui-monospace, Menlo, Consolas, monospace}
+    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:12px;border:1px solid #e9ecef}
+    th,td{padding:10px;border-bottom:1px solid #e9ecef;text-align:left;font-size:13px}
+    th{background:#f1f3f5;font-weight:1000}
+    tr:last-child td{border-bottom:0}
+    .kpi{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px}
+    .kpi .k{background:#fff;border:1px solid #e9ecef;border-radius:12px;padding:10px}
+    .k .h{font-size:12px;color:var(--muted);font-weight:900}
+    .k .v{font-size:18px;font-weight:1000;margin-top:4px}
+    .tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#f1f3f5;font-weight:1000;font-size:12px}
     .right{display:flex;gap:8px;flex-wrap:wrap}
-    .right button{flex:1;min-width:160px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-    @media(max-width:720px){.grid{grid-template-columns:1fr}}
-    .kpi{background:#fff;border:1px solid #e9ecef;border-radius:12px;padding:10px}
-    .kpi .h{font-weight:1000;font-size:14px}
-    .kpi .v{font-weight:1100;font-size:18px;margin-top:4px}
-    table{width:100%;border-collapse:collapse;margin-top:8px}
-    th,td{padding:10px;border-bottom:1px solid #e9ecef;text-align:left;font-size:14px}
-    th{font-weight:1000}
-    .neg{color:#c92a2a;font-weight:1000}
-    .pos{color:#2b8a3e;font-weight:1000}
+    .right .btn{flex:1;min-width:180px}
+    .msg{display:none;margin-top:8px;font-weight:1000;font-size:13px}
+    .msg.ok{color:var(--ok)}
+    .msg.bad{color:var(--danger)}
+    details summary{cursor:pointer;font-weight:1000}
   </style>
 </head>
 <body>
 <header>
-  <div class="t1">JULIANO — FECHAMENTO + NOTA A PRAZO</div>
-  <div class="t2">Cole do WhatsApp e IMPORTAR. Consolida 3 unidades e controla saldo por cliente (a prazo).</div>
+  <div class="t1">JULIANO — CONSOLIDADO 3 UNIDADES + NOTA A PRAZO</div>
+  <div class="t2">Cole a mensagem do WhatsApp de cada unidade → IMPORTAR → consulte por dia/período + saldos a prazo por cliente.</div>
 </header>
 
 <div class="wrap">
 
   <div class="card">
-    <div class="pill">1) IMPORTAR DO WHATSAPP</div>
-    <label>Cole aqui a mensagem recebida da unidade</label>
-    <textarea id="paste" class="mono" placeholder="UNIDADE: FAVORITO
-DATA: 2026-02-13
-CARROS: 27
-PIX: 1230.00
-DINHEIRO: 420.00
-CREDITO: 980.00
-DEBITO: 350.00
-PRAZO: CLIENTE=Fazenda Santa Clara; TIPO=VENDA; VALOR=50.00; OBS=Lavagem caminhonete
-PRAZO: CLIENTE=Fazenda Santa Clara; TIPO=PAGAMENTO; VALOR=30.00; OBS=PIX"></textarea>
+    <div class="pill">1) IMPORTAR FECHAMENTO (COLA DO WHATSAPP)</div>
+    <div class="small">
+      Passo: WhatsApp → segurar mensagem → <b>Copiar</b> → voltar aqui → <b>Colar</b> → <b>IMPORTAR</b>.<br>
+      Aceita linhas do tipo: UNIDADE, DATA, CARROS, PIX, DINHEIRO, CREDITO, DEBITO, e várias linhas <b>PRAZO:</b>.
+    </div>
 
-    <div class="right">
-      <button class="btn gray" id="btnExample">Colocar exemplo</button>
+    <label>Cole aqui a mensagem (uma unidade por vez)</label>
+    <textarea id="paste" class="mono" placeholder="Cole aqui..."></textarea>
+
+    <div class="right" style="margin-top:8px">
       <button class="btn primary" id="btnImport">IMPORTAR</button>
+      <button class="btn gray" id="btnClearPaste">LIMPAR CAIXA</button>
     </div>
 
-    <div id="msg" class="ok" style="display:none"></div>
-
-    <div class="small" style="margin-top:8px">
-      Importa fechamento do dia + movimentações PRAZO. Tudo fica salvo só no iPhone do Juliano.
+    <div class="row" style="margin-top:8px">
+      <div>
+        <button class="btn gray full" id="btnExportJson">EXPORTAR BACKUP (JSON)</button>
+      </div>
+      <div>
+        <label style="margin-top:0">IMPORTAR BACKUP (JSON)</label>
+        <input type="file" id="importJsonFile" accept="application/json" />
+      </div>
+      <div>
+        <button class="btn danger full" id="btnResetAll">ZERAR TUDO (CUIDADO)</button>
+      </div>
     </div>
+
+    <div id="msg" class="msg"></div>
+
+    <details style="margin-top:10px">
+      <summary>Ver formato esperado (para identificar mensagem errada)</summary>
+      <div class="box mono small">
+UNIDADE: FAVORITO<br>
+DATA: 2026-02-23<br>
+CARROS: 27<br>
+PIX: 1230.00<br>
+DINHEIRO: 420.00<br>
+CREDITO: 980.00<br>
+DEBITO: 350.00<br>
+PRAZO: CLIENTE=FAZENDA SANTA CLARA; TIPO=VENDA; VALOR=50.00; OBS=Lavagem caminhonete<br>
+PRAZO: CLIENTE=FAZENDA SANTA CLARA; TIPO=PAGAMENTO; VALOR=30.00; OBS=PIX
+      </div>
+    </details>
   </div>
 
   <div class="card">
-    <div class="pill">2) CONSULTA FECHAMENTO (DIA OU PERÍODO)</div>
+    <div class="pill">2) CONSULTA — DIA OU PERÍODO</div>
 
     <div class="row">
       <div>
-        <label>Ver um dia</label>
-        <input id="viewDay" type="date" />
+        <label>Modo</label>
+        <select id="mode">
+          <option value="DIA">Dia</option>
+          <option value="PERIODO">Período</option>
+        </select>
       </div>
-      <div>
-        <label>&nbsp;</label>
-        <button class="btn gray" id="btnToday">Hoje</button>
+      <div id="diaBox">
+        <label>Data</label>
+        <input type="date" id="qDate" />
+      </div>
+      <div id="periodoBox" style="display:none">
+        <label>Início</label>
+        <input type="date" id="qStart" />
+      </div>
+      <div id="periodoBox2" style="display:none">
+        <label>Fim</label>
+        <input type="date" id="qEnd" />
+      </div>
+    </div>
+
+    <div class="right" style="margin-top:8px">
+      <button class="btn ok" id="btnRun">APURAR</button>
+      <button class="btn gray" id="btnToday">HOJE</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="pill">RESULTADO — CONSOLIDADO</div>
+    <div class="kpi" style="margin-top:8px">
+      <div class="k"><div class="h">Carros (total)</div><div class="v" id="kCars">0</div></div>
+      <div class="k"><div class="h">Recebido (PIX+Dinheiro+Crédito+Débito)</div><div class="v" id="kTotal">R$ 0,00</div></div>
+      <div class="k"><div class="h">Nota a prazo (movimentação no período)</div><div class="v" id="kPrazoMov">R$ 0,00</div></div>
+    </div>
+
+    <div class="box" style="margin-top:10px">
+      <b>Quebra por forma de pagamento (consolidado):</b>
+      <div class="row" style="margin-top:8px">
+        <div class="k"><div class="h">PIX</div><div class="v" id="kPix">R$ 0,00</div></div>
+        <div class="k"><div class="h">Dinheiro</div><div class="v" id="kCash">R$ 0,00</div></div>
+        <div class="k"><div class="h">Crédito</div><div class="v" id="kCredit">R$ 0,00</div></div>
+        <div class="k"><div class="h">Débito</div><div class="v" id="kDebit">R$ 0,00</div></div>
       </div>
     </div>
 
     <div class="divider"></div>
 
-    <div class="row">
-      <div>
-        <label>Período — data inicial</label>
-        <input id="fromDate" type="date" />
-      </div>
-      <div>
-        <label>Período — data final</label>
-        <input id="toDate" type="date" />
-      </div>
-    </div>
-
-    <div class="right">
-      <button class="btn gray" id="btnPeriod">Gerar período</button>
-      <button class="btn gray" id="btnCopy">Copiar resumo</button>
-      <button class="btn primary" id="btnWhats">Enviar resumo no WhatsApp</button>
-      <button class="btn danger" id="btnClearAll">Apagar tudo (cuidado)</button>
+    <div class="pill">RESULTADO — POR UNIDADE</div>
+    <div class="box" style="margin-top:8px">
+      <table>
+        <thead>
+          <tr>
+            <th>Unidade</th>
+            <th>Carros</th>
+            <th>PIX</th>
+            <th>Dinheiro</th>
+            <th>Crédito</th>
+            <th>Débito</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="tblUnits"></tbody>
+      </table>
     </div>
 
     <div class="divider"></div>
-    <h3 style="margin:0 0 8px">Resultado (fechamento)</h3>
-    <div id="result"></div>
+
+    <div class="pill">LANÇAMENTOS IMPORTADOS (editar/excluir se veio errado)</div>
+    <div class="small">Você pode excluir um fechamento importado errado (por unidade+data) e importar de novo.</div>
+    <div class="box" style="margin-top:8px">
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Unidade</th>
+            <th>Carros</th>
+            <th>Total</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tblEntries"></tbody>
+      </table>
+    </div>
+
   </div>
 
   <div class="card">
-    <div class="pill">3) CONTAS A PRAZO (SALDO POR CLIENTE)</div>
+    <div class="pill">3) NOTA A PRAZO — CONTAS POR CLIENTE</div>
+    <div class="small">
+      Aqui é a “conta corrente” do cliente. <b>VENDA</b> soma (cliente devendo). <b>PAGAMENTO</b> subtrai (abatimento).
+    </div>
 
-    <div class="row">
+    <div class="row" style="margin-top:8px">
       <div>
-        <label>Filtro (cliente contém)</label>
-        <input id="filterClient" placeholder="Ex.: fazenda" />
-      </div>
-      <div>
-        <label>Unidade</label>
-        <select id="filterUnit">
+        <label>Filtrar por unidade</label>
+        <select id="fUnit">
           <option value="TODAS">Todas</option>
           <option value="FAVORITO">Favorito</option>
           <option value="PREFERIDO">Preferido</option>
           <option value="PREDILETO">Predileto</option>
         </select>
       </div>
+      <div>
+        <label>Buscar cliente</label>
+        <input id="fClient" placeholder="Digite parte do nome..." />
+      </div>
+      <div>
+        <label>Mostrar</label>
+        <select id="fSaldo">
+          <option value="TODOS">Todos</option>
+          <option value="DEVENDO">Somente devendo (saldo > 0)</option>
+          <option value="QUITADO">Somente quitado (saldo = 0)</option>
+        </select>
+      </div>
     </div>
 
-    <div class="small">
-      Saldo > 0 = cliente devendo (a receber). Saldo = 0 = quitado.
+    <div class="box" style="margin-top:8px">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Unidade</th>
+            <th>Saldo atual</th>
+            <th>Última movimentação</th>
+          </tr>
+        </thead>
+        <tbody id="tblPrazo"></tbody>
+      </table>
     </div>
 
-    <div id="prazoTable"></div>
+    <details style="margin-top:10px">
+      <summary>Ver extrato de um cliente (digite o nome exato e clique)</summary>
+      <div class="small">Clique numa linha da tabela acima para abrir o extrato do cliente.</div>
+      <div class="box" id="clientStatementBox" style="display:none">
+        <div><b>Cliente:</b> <span id="stClient" class="mono"></span></div>
+        <div><b>Unidade:</b> <span id="stUnit" class="mono"></span></div>
+        <div class="divider"></div>
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Valor</th>
+              <th>Obs</th>
+              <th>Origem</th>
+            </tr>
+          </thead>
+          <tbody id="tblStatement"></tbody>
+        </table>
+        <div class="divider"></div>
+        <button class="btn danger full" id="btnClearClient">Zerar conta deste cliente (CUIDADO)</button>
+      </div>
+    </details>
+
   </div>
 
 </div>
 
 <script>
-  const STORE = "juliano_painel_fechamento_prazo_v1";
+(function(){
+  const STORE_KEY = "juliano_painel_v1";
   const UNITS = ["FAVORITO","PREFERIDO","PREDILETO"];
+
+  // DB shape:
+  // db.entries: { [id]: {id, unit, date, cars, pix, cash, credit, debit, total, raw, createdAt } }
+  // db.prazoTx:  [ {id, unit, date, client, type, value, obs, originEntryId, createdAt} ]
+  function loadDB(){
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return { entries:{}, prazoTx:[] };
+    try{
+      const j = JSON.parse(raw);
+      if(!j.entries) j.entries = {};
+      if(!Array.isArray(j.prazoTx)) j.prazoTx = [];
+      return j;
+    }catch(e){
+      return { entries:{}, prazoTx:[] };
+    }
+  }
+  function saveDB(db){ localStorage.setItem(STORE_KEY, JSON.stringify(db)); }
 
   function el(id){ return document.getElementById(id); }
   function pad2(n){ return String(n).padStart(2,"0"); }
@@ -157,437 +294,543 @@ PRAZO: CLIENTE=Fazenda Santa Clara; TIPO=PAGAMENTO; VALOR=30.00; OBS=PIX"></text
     const d=new Date();
     return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
   }
-  function showMsg(text, ok=true){
-    const m = el("msg");
-    m.style.display="block";
-    m.className = ok ? "ok" : "warn";
-    m.textContent = text;
-    setTimeout(()=>m.style.display="none", 3200);
-  }
   function fmtMoney(n){
-    n = Number(n||n||0);
-    return "R$ " + Number(n||0).toFixed(2).replace(".",",");
+    n = Number(n||0);
+    return "R$ " + n.toFixed(2).replace(".",",");
   }
-
-  function loadDB(){
-    const raw = localStorage.getItem(STORE);
-    if(!raw) return { days:{}, prazoLedger:{} };
-    try{
-      const j = JSON.parse(raw);
-      if(!j.days) j.days = {};
-      if(!j.prazoLedger) j.prazoLedger = {}; // key: unit|client -> balance
-      return j;
-    }catch(e){
-      return { days:{}, prazoLedger:{} };
-    }
-  }
-  function saveDB(db){ localStorage.setItem(STORE, JSON.stringify(db)); }
-  function ensureDay(db, date){
-    if(!db.days[date]){
-      db.days[date] = { FAVORITO:null, PREFERIDO:null, PREDILETO:null };
-    }
-    return db.days[date];
-  }
-
-  function parseMoneyLoose(s){
-    let t = (s||"").toString().trim().replace(/\s/g,"");
-    t = t.replace(/[^\d\.,-]/g,"");
-    if(t.includes(",") && t.includes(".")){
-      t = t.replace(/\./g,"").replace(",",".");
-    }else{
-      if(t.includes(",")) t = t.replace(",",".");
-    }
+  function toNum(s){
+    if(s==null) return null;
+    const t = String(s).trim().replace(",",".");
+    if(t==="") return null;
     const n = Number(t);
     return isNaN(n) ? null : n;
   }
-  function parseDateFlexible(s){
-    const t = (s||"").trim();
-    if(/^\d{4}-\d{2}-\d{2}$/.test(t)) return t;
-    const m = t.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-    if(m) return `${m[3]}-${m[2]}-${m[1]}`;
+  function normalizeUnit(u){
+    if(!u) return null;
+    const up = String(u).trim().toUpperCase();
+    if(UNITS.includes(up)) return up;
     return null;
   }
-  function extractValue(lines, key){
-    const re = new RegExp("^\\s*" + key + "\\s*[:=\\-]\\s*(.+)$","i");
+  function normalizeClient(c){
+    return String(c||"").trim().replace(/\s+/g," ");
+  }
+  function msg(text, ok=true){
+    const m = el("msg");
+    m.style.display = "block";
+    m.className = "msg " + (ok ? "ok" : "bad");
+    m.textContent = text;
+    setTimeout(()=> m.style.display="none", 3500);
+  }
+
+  // Parse incoming WhatsApp message
+  function parseMessage(raw){
+    // Accept either "KEY: value" lines or slight variations.
+    const lines = String(raw||"")
+      .split(/\r?\n/)
+      .map(x=>x.trim())
+      .filter(x=>x.length);
+
+    const data = { unit:null, date:null, cars:null, pix:null, cash:null, credit:null, debit:null, prazo:[] };
+
     for(const line of lines){
-      const m = line.match(re);
-      if(m && m[1]) return m[1].trim();
+      const up = line.toUpperCase();
+
+      // PRAZO line
+      if(up.startsWith("PRAZO:")){
+        // expected: PRAZO: CLIENTE=...; TIPO=VENDA|PAGAMENTO; VALOR=12.34; OBS=...
+        const body = line.substring(line.indexOf(":")+1).trim();
+        const parts = body.split(";").map(p=>p.trim()).filter(Boolean);
+        const obj = { client:"", type:"", value:null, obs:"" };
+
+        for(const p of parts){
+          const idx = p.indexOf("=");
+          if(idx===-1) continue;
+          const k = p.substring(0, idx).trim().toUpperCase();
+          const v = p.substring(idx+1).trim();
+          if(k==="CLIENTE") obj.client = normalizeClient(v);
+          if(k==="TIPO") obj.type = String(v||"").trim().toUpperCase();
+          if(k==="VALOR") obj.value = toNum(v);
+          if(k==="OBS") obj.obs = String(v||"").trim();
+        }
+
+        if(!obj.client || !["VENDA","PAGAMENTO"].includes(obj.type) || obj.value==null || obj.value<=0){
+          // ignore invalid prazo line, but keep a trace
+          data.prazo.push({ _invalid:true, raw: line });
+        }else{
+          data.prazo.push(obj);
+        }
+        continue;
+      }
+
+      // key:value lines
+      const m = line.match(/^([A-Za-zÇÃÕÊÉÍÓÚÁÜÂÔà-ÿ\s]+)\s*:\s*(.+)$/);
+      if(!m) continue;
+      const key = m[1].trim().toUpperCase();
+      const val = m[2].trim();
+
+      if(key==="UNIDADE") data.unit = normalizeUnit(val);
+      else if(key==="DATA") data.date = val; // expecting YYYY-MM-DD
+      else if(key==="CARROS") data.cars = Math.round(toNum(val));
+      else if(key==="PIX") data.pix = toNum(val);
+      else if(key==="DINHEIRO") data.cash = toNum(val);
+      else if(key==="CREDITO" || key==="CRÉDITO") data.credit = toNum(val);
+      else if(key==="DEBITO" || key==="DÉBITO") data.debit = toNum(val);
+    }
+
+    return data;
+  }
+
+  function makeEntryId(unit, date){
+    return `${unit}__${date}`;
+  }
+
+  function validateParsed(p){
+    if(!p.unit) return "UNIDADE inválida (use FAVORITO/PREFERIDO/PREDILETO).";
+    if(!p.date || !/^\d{4}-\d{2}-\d{2}$/.test(p.date)) return "DATA inválida (formato YYYY-MM-DD).";
+    const fields = ["cars","pix","cash","credit","debit"];
+    for(const f of fields){
+      if(p[f]==null || Number.isNaN(p[f])) return `Campo faltando/ruim: ${f.toUpperCase()}.`;
+      if(p[f] < 0) return `Campo negativo não permitido: ${f.toUpperCase()}.`;
     }
     return null;
   }
 
-  function parsePrazoLine(line){
-    // PRAZO: CLIENTE=...; TIPO=VENDA|PAGAMENTO; VALOR=12.34; OBS=...
-    if(!/^PRAZO\s*:/i.test(line)) return null;
-    const body = line.split(":").slice(1).join(":").trim();
-    const parts = body.split(";").map(p=>p.trim()).filter(Boolean);
+  function importMessage(){
+    const raw = el("paste").value;
+    if(!raw.trim()){ msg("Cole a mensagem do WhatsApp primeiro.", false); return; }
 
-    const obj = {};
-    for(const p of parts){
-      const [k, ...rest] = p.split("=");
-      if(!k || !rest.length) continue;
-      obj[k.trim().toUpperCase()] = rest.join("=").trim();
-    }
-    const client = obj["CLIENTE"];
-    const tipo = (obj["TIPO"]||"").toUpperCase();
-    const valor = parseMoneyLoose(obj["VALOR"]);
-    const obs = obj["OBS"] || "";
+    const parsed = parseMessage(raw);
+    const err = validateParsed(parsed);
+    if(err){ msg("Erro na mensagem: " + err, false); return; }
 
-    if(!client || !["VENDA","PAGAMENTO"].includes(tipo) || valor===null) return null;
-    return { client, tipo, valor:Number(valor), obs };
-  }
+    const db = loadDB();
+    const id = makeEntryId(parsed.unit, parsed.date);
 
-  function applyPrazoTx(db, unit, tx){
-    const client = tx.client.trim();
-    const key = `${unit}|${client}`; // separa por unidade
-    const cur = Number(db.prazoLedger[key] || 0);
+    const total = Number(parsed.pix)+Number(parsed.cash)+Number(parsed.credit)+Number(parsed.debit);
 
-    // VENDA aumenta saldo (a receber). PAGAMENTO reduz saldo.
-    const next = tx.tipo === "VENDA" ? (cur + tx.valor) : (cur - tx.valor);
-    db.prazoLedger[key] = Number(next.toFixed(2));
-  }
-
-  function totalRec(r){
-    return (r.pix||0)+(r.cash||0)+(r.credit||0)+(r.debit||0);
-  }
-  function sumRec(a,b){
-    return {
-      cars:(a.cars||0)+(b.cars||0),
-      pix:(a.pix||0)+(b.pix||0),
-      cash:(a.cash||0)+(b.cash||0),
-      credit:(a.credit||0)+(b.credit||0),
-      debit:(a.debit||0)+(b.debit||0),
+    db.entries[id] = {
+      id,
+      unit: parsed.unit,
+      date: parsed.date,
+      cars: Number(parsed.cars),
+      pix: Number(parsed.pix),
+      cash: Number(parsed.cash),
+      credit: Number(parsed.credit),
+      debit: Number(parsed.debit),
+      total,
+      raw,
+      createdAt: new Date().toISOString()
     };
-  }
-  function kpi(title, r){
-    const t = totalRec(r);
-    return `
-      <div class="box">
-        <div class="grid">
-          <div class="kpi"><div class="h">${title}</div><div class="small">Carros: <b>${r.cars||0}</b></div></div>
-          <div class="kpi"><div class="h">Total</div><div class="v">${fmtMoney(t)}</div><div class="small">PIX + Dinheiro + Crédito + Débito</div></div>
-          <div class="kpi"><div class="h">PIX</div><div class="v">${fmtMoney(r.pix||0)}</div></div>
-          <div class="kpi"><div class="h">Dinheiro</div><div class="v">${fmtMoney(r.cash||0)}</div></div>
-          <div class="kpi"><div class="h">Crédito</div><div class="v">${fmtMoney(r.credit||0)}</div></div>
-          <div class="kpi"><div class="h">Débito</div><div class="v">${fmtMoney(r.debit||0)}</div></div>
-        </div>
-      </div>
-    `;
-  }
 
-  function dateToTime(d){ return new Date(d + "T00:00:00").getTime(); }
+    // remove old prazo tx linked to this entry id (to allow re-import cleanly)
+    db.prazoTx = db.prazoTx.filter(tx => tx.originEntryId !== id);
 
-  let lastSummary = "";
-
-  function makeSummaryDay(date){
-    const db = loadDB();
-    const day = ensureDay(db, date);
-    const cons = UNITS.reduce((acc,u)=> day[u] ? sumRec(acc, day[u]) : acc, {cars:0,pix:0,cash:0,credit:0,debit:0});
-
-    const lines = [];
-    lines.push(`LAVA RÁPIDO FAVORITO — FECHAMENTO ${date}`);
-    UNITS.forEach(u=>{
-      const r = day[u];
-      if(!r) lines.push(`${u}: sem fechamento`);
-      else lines.push(`${u} — Carros: ${r.cars||0} | PIX: ${fmtMoney(r.pix||0)} | Dinheiro: ${fmtMoney(r.cash||0)} | Crédito: ${fmtMoney(r.credit||0)} | Débito: ${fmtMoney(r.debit||0)} | Total: ${fmtMoney(totalRec(r))}`);
-    });
-    lines.push(`--- CONSOLIDADO ---`);
-    lines.push(`Carros: ${cons.cars||0}`);
-    lines.push(`PIX: ${fmtMoney(cons.pix)} | Dinheiro: ${fmtMoney(cons.cash)} | Crédito: ${fmtMoney(cons.credit)} | Débito: ${fmtMoney(cons.debit)}`);
-    lines.push(`Total: ${fmtMoney(totalRec(cons))}`);
-    return lines.join("\n");
-  }
-
-  function renderDay(date){
-    const db = loadDB();
-    const day = ensureDay(db, date);
-
-    let html = `<div class="small"><b>Dia:</b> ${date}</div>`;
-    let cons = {cars:0,pix:0,cash:0,credit:0,debit:0};
-    let any=false;
-
-    UNITS.forEach(u=>{
-      if(day[u]){
-        any=true;
-        html += kpi(u, day[u]);
-        cons = sumRec(cons, day[u]);
-      }else{
-        html += `<div class="box"><b>${u}</b>: <span class="small">sem fechamento ainda.</span></div>`;
-      }
-    });
-
-    html += `<div class="divider"></div>`;
-    html += any ? kpi("CONSOLIDADO (3 unidades)", cons) : `<div class="box"><b>CONSOLIDADO</b>: <span class="small">sem dados neste dia.</span></div>`;
-
-    el("result").innerHTML = html;
-    lastSummary = makeSummaryDay(date);
-  }
-
-  function renderPeriod(from,to){
-    const db = loadDB();
-    const t1 = dateToTime(from), t2 = dateToTime(to);
-    if(isNaN(t1)||isNaN(t2) || t2<t1){ alert("Período inválido."); return; }
-
-    const perUnit = {
-      FAVORITO:{cars:0,pix:0,cash:0,credit:0,debit:0},
-      PREFERIDO:{cars:0,pix:0,cash:0,credit:0,debit:0},
-      PREDILETO:{cars:0,pix:0,cash:0,credit:0,debit:0},
-    };
-    let daysCount=0;
-
-    for(const dateStr of Object.keys(db.days)){
-      const td = dateToTime(dateStr);
-      if(td>=t1 && td<=t2){
-        const day = ensureDay(db, dateStr);
-        const hasAny = UNITS.some(u=>day[u]);
-        if(hasAny) daysCount++;
-        UNITS.forEach(u=>{
-          if(day[u]) perUnit[u] = sumRec(perUnit[u], day[u]);
-        });
-      }
+    // add prazo
+    for(const tx of parsed.prazo){
+      if(tx && tx._invalid) continue;
+      db.prazoTx.push({
+        id: cryptoRandomId(),
+        unit: parsed.unit,
+        date: parsed.date,
+        client: normalizeClient(tx.client),
+        type: tx.type,
+        value: Number(tx.value),
+        obs: String(tx.obs||""),
+        originEntryId: id,
+        createdAt: new Date().toISOString()
+      });
     }
 
-    let cons = {cars:0,pix:0,cash:0,credit:0,debit:0};
-    let html = `<div class="small"><b>Período:</b> ${from} até ${to} <span class="pill">${daysCount} dia(s) com registro</span></div>`;
-    UNITS.forEach(u=>{
-      html += kpi(u, perUnit[u]);
-      cons = sumRec(cons, perUnit[u]);
-    });
-    html += `<div class="divider"></div>`;
-    html += kpi("CONSOLIDADO (3 unidades)", cons);
+    saveDB(db);
+    msg(`Importado: ${parsed.unit} / ${parsed.date} (prazo: ${parsed.prazo.filter(x=>!x._invalid).length})`, true);
 
-    el("result").innerHTML = html;
+    // refresh views
+    el("paste").value = "";
+    runQuery();
+    renderPrazoTable();
+  }
 
-    // resumo
-    const lines=[];
-    lines.push(`LAVA RÁPIDO FAVORITO — PERÍODO ${from} a ${to}`);
-    lines.push(`Dias com registro: ${daysCount}`);
-    UNITS.forEach(u=>{
-      const r=perUnit[u];
-      lines.push(`${u} — Carros: ${r.cars||0} | PIX: ${fmtMoney(r.pix||0)} | Dinheiro: ${fmtMoney(r.cash||0)} | Crédito: ${fmtMoney(r.credit||0)} | Débito: ${fmtMoney(r.debit||0)} | Total: ${fmtMoney(totalRec(r))}`);
+  function cryptoRandomId(){
+    try{
+      const a = new Uint32Array(4);
+      crypto.getRandomValues(a);
+      return Array.from(a).map(x=>x.toString(16)).join("");
+    }catch(e){
+      return String(Date.now()) + "_" + Math.random().toString(16).slice(2);
+    }
+  }
+
+  function deleteEntry(entryId){
+    const db = loadDB();
+    if(!db.entries[entryId]) return;
+    if(!confirm("Excluir este fechamento (e as notas a prazo dele)?")) return;
+
+    delete db.entries[entryId];
+    db.prazoTx = db.prazoTx.filter(tx => tx.originEntryId !== entryId);
+
+    saveDB(db);
+    msg("Excluído.", true);
+    runQuery();
+    renderPrazoTable();
+    closeStatement();
+  }
+
+  function entriesInRange(db, start, end){
+    // start/end inclusive, YYYY-MM-DD
+    const res = [];
+    for(const id in db.entries){
+      const e = db.entries[id];
+      if(e.date >= start && e.date <= end) res.push(e);
+    }
+    return res;
+  }
+
+  function sumEntries(entries){
+    const sum = {
+      cars:0, pix:0, cash:0, credit:0, debit:0, total:0
+    };
+    for(const e of entries){
+      sum.cars += Number(e.cars||0);
+      sum.pix += Number(e.pix||0);
+      sum.cash += Number(e.cash||0);
+      sum.credit += Number(e.credit||0);
+      sum.debit += Number(e.debit||0);
+      sum.total += Number(e.total||0);
+    }
+    return sum;
+  }
+
+  function groupByUnit(entries){
+    const map = {};
+    for(const u of UNITS){
+      map[u] = { unit:u, cars:0, pix:0, cash:0, credit:0, debit:0, total:0 };
+    }
+    for(const e of entries){
+      const u = e.unit;
+      if(!map[u]) map[u] = { unit:u, cars:0, pix:0, cash:0, credit:0, debit:0, total:0 };
+      map[u].cars += Number(e.cars||0);
+      map[u].pix += Number(e.pix||0);
+      map[u].cash += Number(e.cash||0);
+      map[u].credit += Number(e.credit||0);
+      map[u].debit += Number(e.debit||0);
+      map[u].total += Number(e.total||0);
+    }
+    return Object.values(map);
+  }
+
+  function prazoMovInRange(db, start, end){
+    // movement amount = sum of sales + payments (absolute movement) OR net? user asked apuração; show movement total
+    let mov = 0;
+    for(const tx of db.prazoTx){
+      if(tx.date < start || tx.date > end) continue;
+      mov += Number(tx.value||0);
+    }
+    return mov;
+  }
+
+  function runQuery(){
+    const mode = el("mode").value;
+    const db = loadDB();
+
+    let start, end;
+    if(mode==="DIA"){
+      start = end = el("qDate").value || todayISO();
+    }else{
+      start = el("qStart").value || todayISO();
+      end = el("qEnd").value || todayISO();
+      if(end < start){ const tmp = start; start = end; end = tmp; }
+    }
+
+    const entries = entriesInRange(db, start, end);
+    const sum = sumEntries(entries);
+    const byUnit = groupByUnit(entries);
+    const prazoMov = prazoMovInRange(db, start, end);
+
+    // KPIs
+    el("kCars").textContent = String(sum.cars);
+    el("kTotal").textContent = fmtMoney(sum.total);
+    el("kPrazoMov").textContent = fmtMoney(prazoMov);
+    el("kPix").textContent = fmtMoney(sum.pix);
+    el("kCash").textContent = fmtMoney(sum.cash);
+    el("kCredit").textContent = fmtMoney(sum.credit);
+    el("kDebit").textContent = fmtMoney(sum.debit);
+
+    // unit table
+    const tb = el("tblUnits");
+    tb.innerHTML = "";
+    for(const r of byUnit){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><b>${r.unit}</b></td>
+        <td>${r.cars}</td>
+        <td>${fmtMoney(r.pix)}</td>
+        <td>${fmtMoney(r.cash)}</td>
+        <td>${fmtMoney(r.credit)}</td>
+        <td>${fmtMoney(r.debit)}</td>
+        <td><b>${fmtMoney(r.total)}</b></td>
+      `;
+      tb.appendChild(tr);
+    }
+
+    // entries list table (show only in selected range; order by date desc then unit)
+    const te = el("tblEntries");
+    te.innerHTML = "";
+
+    const sorted = entries.slice().sort((a,b)=>{
+      if(a.date!==b.date) return a.date < b.date ? 1 : -1;
+      return a.unit.localeCompare(b.unit);
     });
-    lines.push(`--- CONSOLIDADO ---`);
-    lines.push(`Carros: ${cons.cars||0}`);
-    lines.push(`PIX: ${fmtMoney(cons.pix)} | Dinheiro: ${fmtMoney(cons.cash)} | Crédito: ${fmtMoney(cons.credit)} | Débito: ${fmtMoney(cons.debit)}`);
-    lines.push(`Total: ${fmtMoney(totalRec(cons))}`);
-    lastSummary = lines.join("\n");
+
+    if(!sorted.length){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="5" class="small">Sem lançamentos no período.</td>`;
+      te.appendChild(tr);
+      return;
+    }
+
+    for(const e of sorted){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${e.date}</td>
+        <td><span class="tag">${e.unit}</span></td>
+        <td>${e.cars}</td>
+        <td><b>${fmtMoney(e.total)}</b></td>
+        <td>
+          <button class="btn danger" data-del="${e.id}">Excluir</button>
+        </td>
+      `;
+      te.appendChild(tr);
+    }
+
+    te.querySelectorAll("button[data-del]").forEach(btn=>{
+      btn.addEventListener("click", ()=> deleteEntry(btn.getAttribute("data-del")));
+    });
+  }
+
+  // PRAZO — compute balances per client per unit
+  function computePrazoBalances(db){
+    // key: unit|client -> {client, unit, balance, lastDate}
+    const map = new Map();
+    for(const tx of db.prazoTx){
+      const unit = tx.unit;
+      const client = normalizeClient(tx.client);
+      if(!unit || !client) continue;
+      const key = unit + "|" + client.toUpperCase();
+      if(!map.has(key)){
+        map.set(key, { client, unit, balance:0, lastDate:tx.date, lastAt:tx.createdAt });
+      }
+      const row = map.get(key);
+      const val = Number(tx.value||0);
+      if(tx.type==="VENDA") row.balance += val;
+      else if(tx.type==="PAGAMENTO") row.balance -= val;
+
+      // track latest movement
+      if(tx.date > row.lastDate) row.lastDate = tx.date;
+      if(tx.createdAt && tx.createdAt > (row.lastAt||"")) row.lastAt = tx.createdAt;
+    }
+    return Array.from(map.values());
   }
 
   function renderPrazoTable(){
     const db = loadDB();
-    const filter = (el("filterClient").value||"").trim().toLowerCase();
-    const unitFilter = el("filterUnit").value;
+    const fUnit = el("fUnit").value;
+    const fClient = (el("fClient").value||"").trim().toUpperCase();
+    const fSaldo = el("fSaldo").value;
 
-    // agrega por cliente (e por unidade)
-    const rows = [];
-    for(const key of Object.keys(db.prazoLedger)){
-      const [unit, ...clientParts] = key.split("|");
-      const client = clientParts.join("|");
-      const bal = Number(db.prazoLedger[key]||0);
+    const rows = computePrazoBalances(db);
 
-      if(unitFilter !== "TODAS" && unit !== unitFilter) continue;
-      if(filter && !client.toLowerCase().includes(filter)) continue;
+    let filtered = rows;
+    if(fUnit !== "TODAS") filtered = filtered.filter(r => r.unit === fUnit);
+    if(fClient) filtered = filtered.filter(r => r.client.toUpperCase().includes(fClient));
+    if(fSaldo==="DEVENDO") filtered = filtered.filter(r => r.balance > 0.000001);
+    if(fSaldo==="QUITADO") filtered = filtered.filter(r => Math.abs(r.balance) < 0.000001);
 
-      rows.push({unit, client, bal});
+    filtered.sort((a,b)=>{
+      // devendo first, then by client
+      const da = a.balance > 0 ? 0 : 1;
+      const dbb = b.balance > 0 ? 0 : 1;
+      if(da !== dbb) return da - dbb;
+      if(a.client.toUpperCase() !== b.client.toUpperCase()) return a.client.localeCompare(b.client,"pt-BR");
+      return a.unit.localeCompare(b.unit);
+    });
+
+    const tb = el("tblPrazo");
+    tb.innerHTML = "";
+
+    if(!filtered.length){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="4" class="small">Nenhuma conta a prazo encontrada.</td>`;
+      tb.appendChild(tr);
+      return;
     }
 
-    rows.sort((a,b)=> b.bal - a.bal);
-
-    // consolidado por cliente (se TODAS)
-    let consolidated = [];
-    if(unitFilter === "TODAS"){
-      const map = new Map();
-      rows.forEach(r=>{
-        const cur = map.get(r.client) || 0;
-        map.set(r.client, cur + r.bal);
-      });
-      consolidated = Array.from(map.entries()).map(([client, bal])=>({client, bal}));
-      consolidated.sort((a,b)=> b.bal - a.bal);
+    for(const r of filtered){
+      const tr = document.createElement("tr");
+      const saldo = r.balance;
+      const saldoTxt = fmtMoney(saldo);
+      tr.innerHTML = `
+        <td><b>${r.client}</b></td>
+        <td><span class="tag">${r.unit}</span></td>
+        <td><b style="color:${saldo>0?'#c92a2a':'#2b8a3e'}">${saldoTxt}</b></td>
+        <td>${r.lastDate}</td>
+      `;
+      tr.style.cursor = "pointer";
+      tr.addEventListener("click", ()=> openStatement(r.unit, r.client));
+      tb.appendChild(tr);
     }
-
-    let html = "";
-
-    if(unitFilter === "TODAS"){
-      html += `<div class="box"><b>Consolidado por cliente (3 unidades)</b></div>`;
-      if(!consolidated.length){
-        html += `<div class="box"><span class="small">Sem dados de prazo.</span></div>`;
-      } else {
-        html += `<table><thead><tr><th>Cliente</th><th>Saldo (a receber)</th></tr></thead><tbody>`;
-        consolidated.forEach(r=>{
-          const cls = r.bal>0 ? "pos" : (r.bal<0 ? "neg" : "");
-          html += `<tr><td>${r.client}</td><td class="${cls}">${fmtMoney(r.bal)}</td></tr>`;
-        });
-        html += `</tbody></table>`;
-      }
-
-      html += `<div class="divider"></div>`;
-      html += `<div class="box"><b>Detalhado por unidade</b></div>`;
-    }
-
-    if(!rows.length){
-      html += `<div class="box"><span class="small">Sem dados de prazo para este filtro.</span></div>`;
-    } else {
-      html += `<table><thead><tr><th>Unidade</th><th>Cliente</th><th>Saldo</th></tr></thead><tbody>`;
-      rows.forEach(r=>{
-        const cls = r.bal>0 ? "pos" : (r.bal<0 ? "neg" : "");
-        html += `<tr><td>${r.unit}</td><td>${r.client}</td><td class="${cls}">${fmtMoney(r.bal)}</td></tr>`;
-      });
-      html += `</tbody></table>`;
-    }
-
-    el("prazoTable").innerHTML = html;
   }
 
-  // IMPORTAR
-  el("btnImport").addEventListener("click", ()=>{
-    const text = el("paste").value.trim();
-    if(!text){ showMsg("Cole a mensagem primeiro.", false); return; }
-    const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
-
-    const unitRaw = extractValue(lines, "UNIDADE");
-    const dateRaw = extractValue(lines, "DATA");
-    const carsRaw = extractValue(lines, "CARROS");
-    const pixRaw = extractValue(lines, "PIX");
-    const cashRaw = extractValue(lines, "DINHEIRO");
-    const creditRaw = extractValue(lines, "CREDITO");
-    const debitRaw = extractValue(lines, "DEBITO");
-
-    if(!unitRaw || !dateRaw || !carsRaw || !pixRaw || !cashRaw || !creditRaw || !debitRaw){
-      showMsg("Mensagem incompleta. Precisa: UNIDADE, DATA, CARROS, PIX, DINHEIRO, CREDITO, DEBITO.", false);
-      return;
-    }
-
-    const unit = unitRaw.toUpperCase().trim();
-    if(!UNITS.includes(unit)){
-      showMsg(`UNIDADE inválida: ${unitRaw}. Use FAVORITO, PREFERIDO, PREDILETO.`, false);
-      return;
-    }
-
-    const date = parseDateFlexible(dateRaw);
-    if(!date){ showMsg(`DATA inválida: ${dateRaw}. Use YYYY-MM-DD ou DD/MM/YYYY.`, false); return; }
-
-    const carsN = parseMoneyLoose(carsRaw);
-    const pix = parseMoneyLoose(pixRaw);
-    const cash = parseMoneyLoose(cashRaw);
-    const credit = parseMoneyLoose(creditRaw);
-    const debit = parseMoneyLoose(debitRaw);
-
-    if([carsN,pix,cash,credit,debit].some(v=>v===null)){
-      showMsg("Algum valor numérico inválido.", false);
-      return;
-    }
-    if([carsN,pix,cash,credit,debit].some(v=>v<0)){
-      showMsg("Não aceito número negativo.", false);
-      return;
-    }
-
+  function openStatement(unit, client){
     const db = loadDB();
-    const day = ensureDay(db, date);
+    const c = normalizeClient(client);
+    const u = unit;
 
-    day[unit] = {
-      cars: Math.round(Number(carsN)),
-      pix:Number(pix),
-      cash:Number(cash),
-      credit:Number(credit),
-      debit:Number(debit),
-      imported_at: new Date().toISOString()
+    const txs = db.prazoTx
+      .filter(t => t.unit===u && normalizeClient(t.client).toUpperCase()===c.toUpperCase())
+      .sort((a,b)=>{
+        if(a.date!==b.date) return a.date < b.date ? 1 : -1;
+        return (a.createdAt||"") < (b.createdAt||"") ? 1 : -1;
+      });
+
+    el("clientStatementBox").style.display = "block";
+    el("stClient").textContent = c;
+    el("stUnit").textContent = u;
+
+    const tb = el("tblStatement");
+    tb.innerHTML = "";
+
+    if(!txs.length){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="5" class="small">Sem movimentações.</td>`;
+      tb.appendChild(tr);
+      return;
+    }
+
+    for(const t of txs){
+      const tr = document.createElement("tr");
+      const sign = t.type==="VENDA" ? "+" : "-";
+      tr.innerHTML = `
+        <td>${t.date}</td>
+        <td><span class="tag">${t.type}</span></td>
+        <td><b>${sign} ${fmtMoney(t.value)}</b></td>
+        <td>${escapeHtml(t.obs||"")}</td>
+        <td class="mono small">${t.originEntryId||""}</td>
+      `;
+      tb.appendChild(tr);
+    }
+
+    // bind clear client
+    el("btnClearClient").onclick = ()=>{
+      if(!confirm("Zerar a conta deste cliente nesta unidade? (apaga o histórico dele)")) return;
+      const db2 = loadDB();
+      db2.prazoTx = db2.prazoTx.filter(t => !(t.unit===u && normalizeClient(t.client).toUpperCase()===c.toUpperCase()));
+      saveDB(db2);
+      msg("Conta zerada (cliente).", true);
+      renderPrazoTable();
+      closeStatement();
     };
+  }
 
-    // Importar PRAZO lines
-    const prazoLines = lines.filter(l=>/^PRAZO\s*:/i.test(l));
-    let prazoCount = 0;
-    for(const pl of prazoLines){
-      const tx = parsePrazoLine(pl);
-      if(!tx) continue;
-      applyPrazoTx(db, unit, tx);
-      prazoCount++;
-    }
+  function closeStatement(){
+    el("clientStatementBox").style.display = "none";
+    el("tblStatement").innerHTML = "";
+  }
 
-    saveDB(db);
+  function escapeHtml(s){
+    return String(s||"").replace(/[&<>"']/g, (ch)=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[ch]));
+  }
 
-    el("paste").value = "";
-    el("viewDay").value = date;
-    showMsg(`Importado: ${unit} em ${date} | PRAZO: ${prazoCount} lançamento(s)`, true);
+  // Backup: export JSON file
+  function exportBackup(){
+    const db = loadDB();
+    const blob = new Blob([JSON.stringify(db, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `backup-juliano-${todayISO()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 
-    renderDay(date);
-    renderPrazoTable();
-  });
-
-  el("btnExample").addEventListener("click", ()=>{
-    el("paste").value =
-`UNIDADE: FAVORITO
-DATA: ${todayISO()}
-CARROS: 27
-PIX: 1230.00
-DINHEIRO: 420.00
-CREDITO: 980.00
-DEBITO: 350.00
-PRAZO: CLIENTE=Fazenda Santa Clara; TIPO=VENDA; VALOR=50.00; OBS=Lavagem caminhonete
-PRAZO: CLIENTE=Fazenda Santa Clara; TIPO=PAGAMENTO; VALOR=30.00; OBS=PIX`;
-  });
-
-  // Consulta
-  el("btnToday").addEventListener("click", ()=>{
-    const d = todayISO();
-    el("viewDay").value = d;
-    renderDay(d);
-  });
-  el("viewDay").addEventListener("change", ()=>{
-    const d = el("viewDay").value || todayISO();
-    renderDay(d);
-  });
-  el("btnPeriod").addEventListener("click", ()=>{
-    const f=el("fromDate").value, t=el("toDate").value;
-    if(!f || !t){ alert("Informe data inicial e final."); return; }
-    renderPeriod(f,t);
-  });
-
-  el("btnCopy").addEventListener("click", async ()=>{
-    const txt = (lastSummary||"").trim();
-    if(!txt){ showMsg("Gere um dia ou período primeiro.", false); return; }
+  // Backup: import JSON
+  async function importBackupFromFile(file){
+    const text = await file.text();
+    let j;
     try{
-      await navigator.clipboard.writeText(txt);
-      showMsg("Resumo copiado.", true);
+      j = JSON.parse(text);
     }catch(e){
-      const ta=document.createElement("textarea");
-      ta.value=txt; document.body.appendChild(ta); ta.select();
-      document.execCommand("copy"); document.body.removeChild(ta);
-      showMsg("Resumo copiado.", true);
+      msg("JSON inválido.", false);
+      return;
     }
-  });
-
-  el("btnWhats").addEventListener("click", ()=>{
-    const txt = (lastSummary||"").trim();
-    if(!txt){ showMsg("Gere um dia ou período primeiro.", false); return; }
-    window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, "_blank");
-  });
-
-  el("btnClearAll").addEventListener("click", ()=>{
-    if(!confirm("Apagar TUDO do iPhone do Juliano? Fechamentos + prazo.")) return;
-    localStorage.removeItem(STORE);
-    showMsg("Apagado.", true);
-    const d = el("viewDay").value || todayISO();
-    renderDay(d);
+    if(!j || typeof j !== "object" || !j.entries || !Array.isArray(j.prazoTx)){
+      msg("Backup não parece do sistema.", false);
+      return;
+    }
+    if(!confirm("Importar backup vai substituir seus dados atuais. Continuar?")) return;
+    localStorage.setItem(STORE_KEY, JSON.stringify(j));
+    msg("Backup importado.", true);
+    runQuery();
     renderPrazoTable();
+    closeStatement();
+  }
+
+  function resetAll(){
+    if(!confirm("ZERAR TUDO? Isso apaga lançamentos e contas a prazo.")) return;
+    localStorage.removeItem(STORE_KEY);
+    msg("Tudo zerado.", true);
+    runQuery();
+    renderPrazoTable();
+    closeStatement();
+  }
+
+  // UI wiring
+  el("btnImport").addEventListener("click", importMessage);
+  el("btnClearPaste").addEventListener("click", ()=> el("paste").value="");
+  el("btnExportJson").addEventListener("click", exportBackup);
+  el("btnResetAll").addEventListener("click", resetAll);
+
+  el("importJsonFile").addEventListener("change", (e)=>{
+    const f = e.target.files && e.target.files[0];
+    if(!f) return;
+    importBackupFromFile(f);
+    e.target.value = "";
   });
 
-  // Filtros prazo
-  el("filterClient").addEventListener("input", renderPrazoTable);
-  el("filterUnit").addEventListener("change", renderPrazoTable);
+  el("mode").addEventListener("change", ()=>{
+    const m = el("mode").value;
+    const isDia = (m==="DIA");
+    el("diaBox").style.display = isDia ? "" : "none";
+    el("periodoBox").style.display = isDia ? "none" : "";
+    el("periodoBox2").style.display = isDia ? "none" : "";
+  });
 
-  // init
-  const d = todayISO();
-  el("viewDay").value = d;
+  el("btnRun").addEventListener("click", runQuery);
+  el("btnToday").addEventListener("click", ()=>{
+    el("qDate").value = todayISO();
+    el("qStart").value = todayISO();
+    el("qEnd").value = todayISO();
+    runQuery();
+  });
 
-  const dt = new Date();
-  const to = d;
-  const fromD = new Date(dt.getTime() - 6*24*3600*1000);
-  const from = `${fromD.getFullYear()}-${pad2(fromD.getMonth()+1)}-${pad2(fromD.getDate())}`;
-  el("fromDate").value = from;
-  el("toDate").value = to;
+  // prazo filters
+  ["fUnit","fClient","fSaldo"].forEach(id=>{
+    el(id).addEventListener("input", renderPrazoTable);
+    el(id).addEventListener("change", renderPrazoTable);
+  });
 
-  renderDay(d);
+  // init defaults
+  el("qDate").value = todayISO();
+  el("qStart").value = todayISO();
+  el("qEnd").value = todayISO();
+
+  runQuery();
   renderPrazoTable();
+
+})();
 </script>
 </body>
 </html>
