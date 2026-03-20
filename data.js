@@ -1,7 +1,7 @@
 /**
  * Dados iniciais (JSON) — usados na primeira execução ou após reset
  */
-window.HIGHWAY_SEED = {
+window.ELETRICHENT_SEED = {
   veiculos: [
     { id: "v001", placa: "ABC1D23", marca: "BYD", modelo: "Dolphin", ano: 2024, cor: "Branco", categoria: "compacto", tipo: "elétrico", autonomiaKm: 427, quilometragem: 12500, valorAquisicao: 149990, dataAquisicao: "2024-01-15", status: "disponivel" },
     { id: "v002", placa: "XYZ9E87", marca: "BYD", modelo: "Yuan Plus", ano: 2024, cor: "Prata", categoria: "suv_compacto", tipo: "elétrico", autonomiaKm: 420, quilometragem: 8500, valorAquisicao: 229990, dataAquisicao: "2024-02-20", status: "em_locacao" },

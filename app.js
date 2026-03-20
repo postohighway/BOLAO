@@ -1,18 +1,21 @@
 (function () {
   'use strict';
 
-  const STORAGE_KEY = 'highway_locacao_db';
-  const DEP_KEY = 'highway_depreciacao';
+  const STORAGE_KEY = 'eletrichent_locacao_db';
+  const STORAGE_KEY_LEGACY = 'highway_locacao_db';
+  const DEP_KEY = 'eletrichent_depreciacao';
+  const DEP_KEY_LEGACY = 'highway_depreciacao';
 
   const MESES_DEP = 48;
   const RESIDUAL = 0.15;
 
   function loadDb() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      let raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) raw = localStorage.getItem(STORAGE_KEY_LEGACY);
       if (raw) return JSON.parse(raw);
     } catch (e) {}
-    return JSON.parse(JSON.stringify(window.HIGHWAY_SEED));
+    return JSON.parse(JSON.stringify(window.ELETRICHENT_SEED));
   }
 
   function saveDb(db) {
@@ -62,7 +65,9 @@
   }
 
   let db = loadDb();
-  let depOn = localStorage.getItem(DEP_KEY) === 'true';
+  let depOn =
+    localStorage.getItem(DEP_KEY) === 'true' ||
+    localStorage.getItem(DEP_KEY_LEGACY) === 'true';
 
   function getDb() {
     return db;
@@ -127,6 +132,9 @@
   toggleBtn.addEventListener('click', () => {
     depOn = !depOn;
     localStorage.setItem(DEP_KEY, depOn ? 'true' : 'false');
+    try {
+      localStorage.removeItem(DEP_KEY_LEGACY);
+    } catch (e) {}
     syncDepToggle();
     renderAll();
   });
@@ -137,7 +145,7 @@
     const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'highway-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.download = 'eletrichent-backup-' + new Date().toISOString().slice(0, 10) + '.json';
     a.click();
     URL.revokeObjectURL(a.href);
   });
@@ -175,7 +183,7 @@
 
   document.getElementById('btn-reset').addEventListener('click', () => {
     if (!confirm('Restaurar dados de exemplo? Seus dados atuais serão perdidos.')) return;
-    db = JSON.parse(JSON.stringify(window.HIGHWAY_SEED));
+    db = JSON.parse(JSON.stringify(window.ELETRICHENT_SEED));
     persist();
   });
 
