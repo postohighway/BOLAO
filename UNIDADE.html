@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fechamento Unidade — Lava Rápido Favorito</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root{
+      --bg:#f4f6f8; --card:#fff; --text:#111; --muted:#666;
+      --primary:#0b7285; --danger:#c92a2a; --gray:#868e96;
+      --shadow:0 1px 3px rgba(0,0,0,.12); --radius:14px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    header{background:#000;color:#fff;text-align:center;padding:14px 10px}
+    header .t1{font-weight:1000;letter-spacing:1px;text-transform:uppercase;font-size:16px}
+    header .t2{opacity:.85;font-size:12px;margin-top:4px}
+    .wrap{max-width:920px;margin:0 auto;padding:12px}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 14px;margin-bottom:12px}
+    label{font-size:13px;font-weight:900;display:block;margin:8px 0 6px}
+    input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #d9dde3;font-size:16px;background:#fff}
+    textarea{min-height:90px;resize:vertical}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .row>div{flex:1;min-width:180px}
+    .btn{width:100%;border:0;border-radius:12px;padding:12px;font-weight:1000;cursor:pointer;margin-top:8px}
+    .btn.primary{background:var(--primary);color:#fff}
+    .btn.gray{background:var(--gray);color:#fff}
+    .btn.danger{background:var(--danger);color:#fff}
+    .small{font-size:12px;color:var(--muted);line-height:1.35}
+    .ok{color:#2b8a3e;font-weight:900;font-size:13px;margin-top:8px}
+    .warn{color:var(--danger);font-weight:900;font-size:13px;margin-top:8px}
+    .pill{display:inline-block;padding:3px 10px;border-radius:999px;background:#e7f5ff;color:var(--primary);font-weight:900;font-size:12px}
+    .box{background:#f8f9fa;border:1px solid #e9ecef;border-radius:12px;padding:10px;margin-top:8px}
+    .divider{height:1px;background:#e9ecef;margin:12px 0}
+    .right{display:flex;gap:8px;flex-wrap:wrap}
+    .right button{flex:1;min-width:160px}
+    .mono{font-family:ui-monospace, Menlo, Consolas, monospace}
+    .list{margin:8px 0 0;padding:0;list-style:none}
+    .list li{background:#fff;border:1px solid #e9ecef;border-radius:12px;padding:10px;margin-top:8px}
+    .list .top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#f1f3f5;font-weight:900;font-size:12px}
+    /* Modal */
+    .modalBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:14px;z-index:9999}
+    .modal{width:min(720px, 100%);background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:12px 14px}
+    .modal h3{margin:0 0 8px}
+    .modal .closeRow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .modal .x{border:0;background:#000;color:#fff;border-radius:10px;padding:8px 10px;font-weight:1000;cursor:pointer}
+    .clientBtn{width:100%;text-align:left;border:1px solid #e9ecef;background:#fff;border-radius:12px;padding:10px;font-weight:900;cursor:pointer;margin-top:8px}
+    .clientBtn small{display:block;color:var(--muted);font-weight:600;margin-top:4px}
+  </style>
+</head>
+<body>
+<header>
+  <div class="t1">UNIDADE — FECHAMENTO + NOTA A PRAZO</div>
+  <div class="t2">Preenche fechamento do dia + lança “nota a prazo” pelo POP-UP e envia no WhatsApp pro Juliano.</div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <div class="pill">1) CONFIGURAÇÃO DA UNIDADE</div>
+    <div class="row">
+      <div>
+        <label>Unidade</label>
+        <select id="unit">
+          <option value="FAVORITO">Favorito</option>
+          <option value="PREFERIDO">Preferido</option>
+          <option value="PREDILETO">Predileto</option>
+        </select>
+      </div>
+      <div>
+        <label>Data</label>
+        <input id="date" type="date" />
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="pill">2) FECHAMENTO DO DIA</div>
+    <div class="row">
+      <div>
+        <label>Quantidade de carros</label>
+        <input id="cars" type="number" min="0" step="1" placeholder="Ex.: 27" />
+      </div>
+      <div>
+        <label>PIX (R$)</label>
+        <input id="pix" type="number" min="0" step="0.01" placeholder="Ex.: 1230,00" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Dinheiro (R$)</label>
+        <input id="cash" type="number" min="0" step="0.01" placeholder="Ex.: 420,00" />
+      </div>
+      <div>
+        <label>Crédito (R$)</label>
+        <input id="credit" type="number" min="0" step="0.01" placeholder="Ex.: 980,00" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Débito (R$)</label>
+        <input id="debit" type="number" min="0" step="0.01" placeholder="Ex.: 350,00" />
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button class="btn gray" id="btnClearFields">Limpar campos</button>
+      </div>
+    </div>
+
+    <div id="msg" class="ok" style="display:none"></div>
+
+    <div class="divider"></div>
+
+    <div class="pill">3) NOTA A PRAZO (POP-UP)</div>
+    <div class="small">
+      Use para cliente que vai pagar depois. Você escolhe o cliente na lista (não digita nome solto).
+      <br><b>VENDA</b> aumenta a dívida. <b>PAGAMENTO</b diminui a dívida.
+    </div>
+
+    <div class="right" style="margin-top:8px">
+      <button class="btn primary" id="btnPrazo">Lançar Nota a Prazo (POP-UP)</button>
+      <button class="btn gray" id="btnManageClients">Gerenciar clientes a prazo</button>
+    </div>
+
+    <div class="box" id="prazoBox">
+      <b>Movimentações a prazo deste dia:</b>
+      <ul class="list" id="prazoList"></ul>
+      <div class="small" id="prazoHint">Nenhuma movimentação ainda.</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="pill">4) ENVIAR PARA O JULIANO (WHATSAPP)</div>
+    <div class="small">
+      Aperte “Gerar Mensagem”, confira e depois “Enviar WhatsApp”.
+      <br>O Juliano vai copiar e colar no painel dele e importar.
+    </div>
+
+    <div class="right" style="margin-top:8px">
+      <button class="btn gray" id="btnGenerate">Gerar mensagem</button>
+      <button class="btn primary" id="btnWhats">Enviar WhatsApp</button>
+    </div>
+
+    <label>Mensagem pronta (copiar se quiser)</label>
+    <textarea id="out" class="mono" readonly placeholder="Clique em Gerar mensagem..."></textarea>
+
+    <div class="right">
+      <button class="btn gray" id="btnCopy">Copiar mensagem</button>
+      <button class="btn danger" id="btnClearDayPrazo">Zerar PRAZO do dia (cuidado)</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL: selecionar cliente + lançar venda/pagamento -->
+<div class="modalBackdrop" id="modalPrazo" title="Clique fora para fechar">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="closeRow">
+      <h3>Nota a Prazo — selecionar cliente</h3>
+      <button class="x" id="closePrazo">X</button>
+    </div>
+
+    <label>Buscar cliente</label>
+    <input id="clientSearch" placeholder="Digite para filtrar..." />
+
+    <div id="clientButtons"></div>
+
+    <div class="divider"></div>
+
+    <div id="step2" style="display:none">
+      <div class="box">
+        <b>Cliente escolhido:</b> <span id="chosenClient" class="mono"></span>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Tipo</label>
+          <select id="prazoType">
+            <option value="VENDA">VENDA (a prazo)</option>
+            <option value="PAGAMENTO">PAGAMENTO</option>
+          </select>
+        </div>
+        <div>
+          <label>Valor (R$)</label>
+          <input id="prazoValue" type="number" min="0" step="0.01" placeholder="Ex.: 50,00" />
+        </div>
+      </div>
+
+      <label>Observação (opcional)</label>
+      <input id="prazoObs" placeholder="Ex.: Lavagem caminhonete + cera" />
+
+      <div class="right">
+        <button class="btn gray" id="btnBack">Voltar</button>
+        <button class="btn gray" id="btnCancelPrazo">Cancelar e fechar</button>
+        <button class="btn primary" id="btnAddPrazo">Salvar lançamento</button>
+      </div>
+    </div>
+
+    <div class="small">
+      Dica: mantenha a lista de clientes a prazo curta e bem escrita.
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: gerenciar lista de clientes -->
+<div class="modalBackdrop" id="modalClients">
+  <div class="modal">
+    <div class="closeRow">
+      <h3>Clientes a prazo</h3>
+      <button class="x" id="closeClients">X</button>
+    </div>
+
+    <label>Novo cliente (nome)</label>
+    <div class="row">
+      <div><input id="newClient" placeholder="Ex.: Fazenda Santa Clara" /></div>
+      <div><button class="btn primary" id="btnAddClient">Adicionar</button></div>
+    </div>
+
+    <div class="box">
+      <b>Lista atual:</b>
+      <ul class="list" id="clientList"></ul>
+      <div class="small" id="clientHint"></div>
+    </div>
+
+    <div class="small">
+      Observação: isso salva só neste aparelho (da unidade). O Juliano controla o “oficial” no painel dele.
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORE = "unidade_fechamento_prazo_v1";
+  const CLIENTS_KEY = "unidade_clientes_prazo_v1";
+
+  const UNITS = ["FAVORITO","PREFERIDO","PREDILETO"];
+
+  function el(id){ return document.getElementById(id); }
+  function pad2(n){ return String(n).padStart(2,"0"); }
+  function todayISO(){
+    const d=new Date();
+    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  }
+  function showMsg(text, ok=true){
+    const m = el("msg");
+    m.style.display="block";
+    m.className = ok ? "ok" : "warn";
+    m.textContent = text;
+    setTimeout(()=>m.style.display="none", 2800);
+  }
+
+  function loadDB(){
+    const raw = localStorage.getItem(STORE);
+    if(!raw) return { days: {} };
+    try{
+      const j = JSON.parse(raw);
+      if(!j.days) j.days = {};
+      return j;
+    }catch(e){
+      return { days: {} };
+    }
+  }
+  function saveDB(db){ localStorage.setItem(STORE, JSON.stringify(db)); }
+
+  function ensureDay(db, date){
+    if(!db.days[date]){
+      db.days[date] = { fechamento: null, prazoTx: [] };
+    }
+    if(!Array.isArray(db.days[date].prazoTx)) db.days[date].prazoTx = [];
+    return db.days[date];
+  }
+
+  function loadClients(){
+    const raw = localStorage.getItem(CLIENTS_KEY);
+    if(!raw){
+      return ["CLIENTE EXEMPLO 1","CLIENTE EXEMPLO 2"];
+    }
+    try{
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr : [];
+    }catch(e){ return []; }
+  }
+  function saveClients(arr){
+    localStorage.setItem(CLIENTS_KEY, JSON.stringify(arr));
+  }
+
+  function numVal(id){
+    const v = (el(id).value || "").toString().trim();
+    if(v==="") return null;
+    const n = Number(v);
+    return isNaN(n) ? null : n;
+  }
+
+  function fmtMoney(n){
+    n = Number(n||0);
+    return "R$ " + n.toFixed(2).replace(".",",");
+  }
+
+  function renderPrazoList(){
+    const date = el("date").value || todayISO();
+    const db = loadDB();
+    const day = ensureDay(db, date);
+    const ul = el("prazoList");
+    ul.innerHTML = "";
+
+    if(!day.prazoTx.length){
+      el("prazoHint").textContent = "Nenhuma movimentação ainda.";
+      return;
+    }
+    el("prazoHint").textContent = "";
+
+    day.prazoTx.forEach((tx, idx)=>{
+      const li = document.createElement("li");
+      const sign = tx.type === "VENDA" ? "+" : "-";
+      li.innerHTML = `
+        <div class="top">
+          <div><b>${tx.client}</b> <span class="tag">${tx.type}</span></div>
+          <div><b>${sign} ${fmtMoney(tx.value)}</b></div>
+        </div>
+        <div class="small">${tx.obs ? tx.obs : ""} <span class="mono">${tx.time}</span></div>
+        <div class="right">
+          <button class="btn danger" data-del="${idx}" style="margin-top:8px">Excluir</button>
+        </div>
+      `;
+      ul.appendChild(li);
+    });
+
+    ul.querySelectorAll("button[data-del]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const i = Number(btn.getAttribute("data-del"));
+        const db2 = loadDB();
+        const day2 = ensureDay(db2, date);
+        day2.prazoTx.splice(i,1);
+        saveDB(db2);
+        renderPrazoList();
+      });
+    });
+  }
+
+  function buildMessage(){
+    const unit = el("unit").value;
+    const date = el("date").value || todayISO();
+
+    const cars = numVal("cars");
+    const pix = numVal("pix");
+    const cash = numVal("cash");
+    const credit = numVal("credit");
+    const debit = numVal("debit");
+
+    if([cars,pix,cash,credit,debit].some(v=>v===null)){
+      showMsg("Preencha TODOS os campos do fechamento antes de gerar.", false);
+      return null;
+    }
+    if([cars,pix,cash,credit,debit].some(v=>v<0)){
+      showMsg("Não aceito número negativo.", false);
+      return null;
+    }
+
+    const db = loadDB();
+    const day = ensureDay(db, date);
+
+    // salva fechamento local
+    day.fechamento = {
+      unit, date,
+      cars: Math.round(cars),
+      pix:Number(pix), cash:Number(cash), credit:Number(credit), debit:Number(debit),
+      saved_at: new Date().toISOString()
+    };
+    saveDB(db);
+
+    const lines = [];
+    lines.push(`UNIDADE: ${unit}`);
+    lines.push(`DATA: ${date}`);
+    lines.push(`CARROS: ${Math.round(cars)}`);
+    lines.push(`PIX: ${Number(pix).toFixed(2)}`);
+    lines.push(`DINHEIRO: ${Number(cash).toFixed(2)}`);
+    lines.push(`CREDITO: ${Number(credit).toFixed(2)}`);
+    lines.push(`DEBITO: ${Number(debit).toFixed(2)}`);
+
+    // prazo
+    day.prazoTx.forEach(tx=>{
+      // Formato rígido para o Juliano importar sem erro
+      // PRAZO: CLIENTE=...; TIPO=VENDA|PAGAMENTO; VALOR=12.34; OBS=...
+      const obs = (tx.obs||"").replaceAll(";", ",");
+      lines.push(`PRAZO: CLIENTE=${tx.client}; TIPO=${tx.type}; VALOR=${Number(tx.value).toFixed(2)}; OBS=${obs}`);
+    });
+
+    return lines.join("\n");
+  }
+
+  function openModal(id){ el(id).style.display="flex"; }
+  function closeModal(id){ el(id).style.display="none"; }
+
+  // Modal prazo state
+  let chosenClient = null;
+
+  function renderClientButtons(filter=""){
+    const list = loadClients();
+    const box = el("clientButtons");
+    box.innerHTML = "";
+
+    const f = filter.trim().toUpperCase();
+    const filtered = list.filter(c => c.toUpperCase().includes(f));
+
+    if(!filtered.length){
+      box.innerHTML = `<div class="box"><b>Nenhum cliente encontrado.</b><div class="small">Abra “Gerenciar clientes a prazo” para adicionar.</div></div>`;
+      return;
+    }
+
+    filtered.forEach(name=>{
+      const btn = document.createElement("button");
+      btn.className = "clientBtn";
+      btn.type = "button";
+      btn.innerHTML = `${name}<small>Toque para selecionar</small>`;
+      btn.addEventListener("click", ()=>{
+        chosenClient = name;
+        el("chosenClient").textContent = name;
+        el("step2").style.display = "block";
+        box.style.display = "none";
+        el("clientSearch").disabled = true;
+      });
+      box.appendChild(btn);
+    });
+  }
+
+  function resetPrazoModal(){
+    chosenClient = null;
+    el("prazoType").value = "VENDA";
+    el("prazoValue").value = "";
+    el("prazoObs").value = "";
+    el("step2").style.display = "none";
+    el("clientButtons").style.display = "block";
+    el("clientSearch").disabled = false;
+    el("clientSearch").value = "";
+    renderClientButtons("");
+  }
+
+  // Gerenciar clientes
+  function renderClients(){
+    const ul = el("clientList");
+    ul.innerHTML = "";
+    const arr = loadClients();
+
+    if(!arr.length){
+      el("clientHint").textContent = "Sem clientes cadastrados.";
+      return;
+    }
+    el("clientHint").textContent = "";
+
+    arr.forEach((c, idx)=>{
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div class="top">
+          <div><b>${c}</b></div>
+          <div><button class="btn danger" data-rm="${idx}" style="margin-top:0">Remover</button></div>
+        </div>
+      `;
+      ul.appendChild(li);
+    });
+
+    ul.querySelectorAll("button[data-rm]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const i = Number(btn.getAttribute("data-rm"));
+        const arr2 = loadClients();
+        arr2.splice(i,1);
+        saveClients(arr2);
+        renderClients();
+        // Atualiza modal prazo também
+        renderClientButtons(el("clientSearch").value || "");
+      });
+    });
+  }
+
+  // Eventos
+  el("btnClearFields").addEventListener("click", ()=>{
+    ["cars","pix","cash","credit","debit"].forEach(id=>el(id).value="");
+    showMsg("Campos do fechamento limpos.", true);
+  });
+
+  el("btnPrazo").addEventListener("click", ()=>{
+    resetPrazoModal();
+    openModal("modalPrazo");
+  });
+  el("closePrazo").addEventListener("click", ()=>{
+    resetPrazoModal();
+    closeModal("modalPrazo");
+  });
+  el("btnCancelPrazo").addEventListener("click", ()=>{
+    resetPrazoModal();
+    closeModal("modalPrazo");
+  });
+  el("modalPrazo").addEventListener("click", (e)=>{
+    if (e.target === el("modalPrazo")){
+      resetPrazoModal();
+      closeModal("modalPrazo");
+    }
+  });
+  el("btnBack").addEventListener("click", ()=>{
+    chosenClient = null;
+    el("step2").style.display = "none";
+    el("clientButtons").style.display = "block";
+    el("clientSearch").disabled = false;
+  });
+
+  el("clientSearch").addEventListener("input", ()=>{
+    renderClientButtons(el("clientSearch").value || "");
+  });
+
+  el("btnAddPrazo").addEventListener("click", ()=>{
+    const date = el("date").value || todayISO();
+    const v = numVal("prazoValue");
+    if(!chosenClient){
+      showMsg("Escolha o cliente.", false); return;
+    }
+    if(v===null || v<=0){
+      showMsg("Valor do prazo deve ser maior que zero.", false); return;
+    }
+    const type = el("prazoType").value;
+    const obs = (el("prazoObs").value||"").trim();
+
+    const db = loadDB();
+    const day = ensureDay(db, date);
+
+    const now = new Date();
+    const time = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+
+    day.prazoTx.push({
+      client: chosenClient,
+      type,
+      value: Number(v),
+      obs,
+      time
+    });
+    saveDB(db);
+
+    closeModal("modalPrazo");
+    renderPrazoList();
+    showMsg("Lançamento a prazo salvo.", true);
+  });
+
+  el("btnManageClients").addEventListener("click", ()=>{
+    renderClients();
+    openModal("modalClients");
+  });
+  el("closeClients").addEventListener("click", ()=> closeModal("modalClients"));
+
+  el("btnAddClient").addEventListener("click", ()=>{
+    const name = (el("newClient").value||"").trim();
+    if(!name){ return; }
+    const up = name.toUpperCase();
+    let arr = loadClients().map(x=>x.trim()).filter(Boolean);
+
+    if(arr.map(x=>x.toUpperCase()).includes(up)){
+      showMsg("Cliente já existe.", false);
+      return;
+    }
+    arr.push(name);
+    arr.sort((a,b)=>a.localeCompare(b,"pt-BR"));
+    saveClients(arr);
+    el("newClient").value="";
+    renderClients();
+    renderClientButtons(el("clientSearch").value || "");
+    showMsg("Cliente adicionado.", true);
+  });
+
+  el("btnGenerate").addEventListener("click", ()=>{
+    const msg = buildMessage();
+    if(!msg) return;
+    el("out").value = msg;
+    showMsg("Mensagem gerada.", true);
+  });
+
+  el("btnCopy").addEventListener("click", async ()=>{
+    const txt = el("out").value.trim();
+    if(!txt){ showMsg("Gere a mensagem primeiro.", false); return; }
+    try{
+      await navigator.clipboard.writeText(txt);
+      showMsg("Copiado.", true);
+    }catch(e){
+      const ta = document.createElement("textarea");
+      ta.value = txt;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      showMsg("Copiado.", true);
+    }
+  });
+
+  el("btnWhats").addEventListener("click", ()=>{
+    const msg = el("out").value.trim() || buildMessage();
+    if(!msg) return;
+    const text = encodeURIComponent(msg);
+    window.open(`https://wa.me/?text=${text}`, "_blank");
+  });
+
+  el("btnClearDayPrazo").addEventListener("click", ()=>{
+    const date = el("date").value || todayISO();
+    if(!confirm("Zerar as movimentações PRAZO desse dia?")) return;
+    const db = loadDB();
+    const day = ensureDay(db, date);
+    day.prazoTx = [];
+    saveDB(db);
+    renderPrazoList();
+    showMsg("PRAZO do dia zerado.", true);
+  });
+
+  // init
+  el("date").value = todayISO();
+  renderClientButtons("");
+  renderPrazoList();
+</script>
+</body>
+</html>
